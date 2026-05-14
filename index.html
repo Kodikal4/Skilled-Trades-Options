@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diesel Diagnostic Simulator</title>
+    <style>
+       body { 
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+        background-color: #1a1a1a; 
+        color: #e0e0e0; 
+        margin: 0;
+        padding: 0;
+       }
+    
+        /* Grid Layout: 75% Scanner, 25% Sidebar */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 3fr 1fr;
+            gap: 20px;
+            max-width: 1300px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        /* Left Side: The Diagnostic Terminal */
+        .scanner-card { 
+            background: #262626; 
+            border: 2px solid #ffcd03; 
+            padding: 40px; 
+            border-radius: 5px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            position: relative;
+        }
+
+        /* Right Side: The Service Log */
+        .sidebar {
+            background: #111;
+            border-left: 4px solid #ffcd03;
+            padding: 20px;
+            border-radius: 5px;
+            height: 60vh;
+            overflow-y: auto;
+        }
+
+        .log-entry {
+            border-bottom: 1px solid #333;
+            padding: 10px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+        }
+
+        /* Button Styling */
+        .btn-action { background: #ffcd03; color: #111; border: none; padding: 12px 25px; margin: 10px; cursor: pointer; font-weight: bold; text-transform: uppercase; border-radius: 3px; }
+        .btn-next { background: #444; color: white; border: 1px solid #555; padding: 10px 20px; cursor: pointer; margin-top: 30px; }
+        .btn-next { display: none; } /* Hide until an answer is picked */
+
+        /* Typewriter Effect */
+        .typewriter {
+            overflow: hidden;
+            white-space: nowrap;
+            border-right: 3px solid #ffcd03;
+            animation: typing 1.5s steps(40, end);
+        }
+        @keyframes typing { from { width: 0 } to { width: 100% } }
+    </style>
+</head>
+<body>
+    <h1 style="text-align:center; color:#ffcd03; margin-top:30px;">CAT-SCAN DIAGNOSTIC v2.0</h1>
+    
+    <div class="main-layout">
+        <div class="scanner-card">
+            <h2 id="component" class="typewriter">Initializing Systems...</h2>
+            <p id="symptom" style="font-size: 1.2em; color: #ffcd03;">Awaiting data...</p>
+            
+            <div id="options">
+                <button id="btn-0" class="btn-action" onclick="handleChoice(0)"></button>
+                <button id="btn-1" class="btn-action" onclick="handleChoice(1)"></button>
+                <button id="btn-2" class="btn-action" onclick="handleChoice(2)"></button>
+            </div>
+
+            <p id="result" style="font-weight: bold; margin-top: 20px;"></p>
+            <p id="explanation" style="color: #aaa; font-style: italic; min-height: 40px;"></p>
+            
+            <button class="btn-next" onclick="loadChallenge()">Next Diagnostic Scan</button>
+        </div>
+
+        <div class="sidebar">
+            <h3 style="color:#ffcd03; font-size: 0.9em; letter-spacing: 2px;">SERVICE HISTORY LOG</h3>
+            <div id="history-log">
+                <div class="log-entry" style="color:#555;">[SYSTEM READY]</div>
+            </div>
+        </div>
+
+        <div class="trade-selector-container" style="text-align: center; margin-bottom: 20px;">
+            <label for="trade-select" style="color: #888; font-family: monospace;">SELECT MISSION SECTOR:</label>
+            <select id="trade-select" onchange="loadChallenge()" style="background: #111; color: #ffcd03; border: 1px solid #ffcd03; padding: 10px; font-family: monospace;">
+                <option value="Diesel">HEAVY EQUIPMENT (DIESEL)</option>
+                <option value="Lineman">POWER GRID (LINEMAN)</option>
+            </select>
+        </div>
+</body>
+
+<script>
+
+    let sessionCorrect = 0;
+    let sessionTotal = 0;
+    const SESSION_LIMIT = 5; // Trigger feedback after 5 questions
+
+
+    let currentFailureKey = "";
+    let currentComponent = "";
+    let currentExplanation = "";
+
+    async function loadChallenge() {
+        const tradeButtons = {
+            "Diesel": ["Fuel", "Spark", "Compression"],
+            "Lineman": ["Electrical", "Structural", "Insulation"],
+        };
+
+        // Inside your loadChallenge success block:
+        const selectedTrade = document.getElementById('trade-select').value;
+        const labels = tradeButtons[selectedTrade] || tradeButtons["Diesel"];
+
+        labels.forEach((label, index) => {
+            const btn = document.getElementById(`btn-${index}`);
+            btn.innerText = label;
+            // We update the onclick to pass the specific label
+            btn.onclick = () => checkAnswer(label);
+        });
+
+        try {
+            // Corrected: Added the trade parameter to the URL
+            const response = await fetch(`http://127.0.0.1:8000/get-challenge?trade=${selectedTrade}`);
+            const data = await response.json();
+
+            if (data.error) {
+                document.getElementById('component').innerText = "SYSTEM ERROR";
+                document.getElementById('symptom').innerText = data.error;
+            } else {
+                // Update Global Context
+                currentComponent = data.component;
+                currentFailureKey = data.failure_mode;
+                currentExplanation = data.explanation;
+
+                // Call the correct function name
+                applyTradeTheme(selectedTrade);
+
+                // Update UI and Trigger Animation
+                const compElement = document.getElementById('component');
+                compElement.style.animation = 'none';
+                compElement.offsetHeight; /* trigger reflow */
+                compElement.style.animation = null; 
+                
+                compElement.innerText = data.component;
+                document.getElementById('symptom').innerText = "SYMPTOM: " + data.symptom;
+                
+                // Reset Terminal Results
+                document.getElementById('result').innerText = "";
+                document.getElementById('explanation').innerText = "";
+            }
+        } catch (err) {
+            document.getElementById('component').innerText = "COMMUNICATION FAILURE";
+            document.getElementById('symptom').innerText = "Unable to reach ECM. Check API status.";
+        }
+    }
+
+    function applyTradeTheme(trade) {
+        const scanner = document.querySelector('.scanner-card');
+        const title = document.querySelector('h1');
+        
+        if (trade === 'Lineman') {
+            scanner.style.borderColor = "#ff6600"; // Safety Orange
+            title.style.color = "#ff6600";
+            title.innerText = "UTILITY GRID DIAGNOSTIC v1.0";
+        } else {
+            scanner.style.borderColor = "#ffcd03"; // CAT Yellow
+            title.style.color = "#ffcd03";
+            title.innerText = "CAT-SCAN DIAGNOSTIC v2.0";
+        }
+    }
+
+    function checkAnswer(choice) {
+        const historyLog = document.getElementById('history-log');
+        const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        const nextBtn = document.querySelector('.btn-next');
+        let logStatus = "";
+
+        sessionTotal++;
+
+        // logic for checking answer...
+        if (currentFailureKey.toLowerCase().includes(choice.toLowerCase())) {
+            sessionCorrect++;
+            document.getElementById('result').innerText = "✅ SYSTEM FAULT IDENTIFIED";
+            document.getElementById('result').style.color = "#ffcd03";
+            document.getElementById('explanation').innerText = "ANALYSIS: " + currentExplanation;
+            logStatus = "RESOLVED";
+        } else {
+            document.getElementById('result').innerText = "❌ ERRONEOUS DIAGNOSIS";
+            document.getElementById('result').style.color = "#f44336";
+            logStatus = "MISDIAGNOSIS";
+        }
+
+        // Add to side log
+        const entry = document.createElement('div');
+        entry.className = 'log-entry';
+        entry.innerHTML = `<span style="color:#555;">[${time}]</span> ${currentComponent}: ${logStatus}`;
+        historyLog.prepend(entry);
+
+        // CRITICAL: Check if we show "Next" or "Final Feedback"
+        if (sessionTotal >= SESSION_LIMIT) {
+            displayFinalFeedback(sessionCorrect, sessionTotal);
+            nextBtn.style.display = "none"; // Hide next button on final screen
+        } else {
+            nextBtn.style.display = "block"; // Show next button to continue session
+        }
+    }
+
+    function displayFinalFeedback(correct, total) {
+        const percentage = (correct / total) * 100;
+        const resultEl = document.getElementById('result');
+        const explanationEl = document.getElementById('explanation');
+        const optionsEl = document.getElementById('options');
+
+        optionsEl.style.display = 'none'; // Hide choices
+
+        let feedbackColor = percentage >= 60 ? "#4CAF50" : "#ff9800";
+        let statusText = percentage >= 60 ? "🏆 APPRENTICESHIP READY" : "🛠️ FIELD TRAINING REQUIRED";
+
+        resultEl.innerText = statusText;
+        resultEl.style.color = feedbackColor;
+    
+        explanationEl.innerHTML = `
+            <div style="border: 1px solid ${feedbackColor}; padding: 15px; margin-top: 10px;">
+                <p>Session Accuracy: ${percentage.toFixed(0)}%</p>
+                <p>${percentage >= 60 ? "Your diagnostic logic meets industry standards." : "Focus on identifying underlying failure modes to improve safety."}</p>
+                <button class="btn-action" onclick="location.reload()">RESTART SIMULATOR</button>
+            </div>`;
+    }
+
+    window.onload = loadChallenge;
+</script>
+</html>
