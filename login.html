@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Log In | Diesel Diagnostic</title>
+        <style>
+            body { font-family: 'Segoe UI', sans-serif; background-color: #222; color: white; line-height: 1.6; margin: 0; }
+            nav { background: #111; padding: 20px; text-align: center; border-bottom: 3px solid #ffcd03; }
+            nav a { color: #ffcd03; text-decoration: none; margin: 0 15px; font-weight: bold; text-transform: uppercase; }
+            .form-container { max-width: 400px; margin:  auto; padding: 20px; background: #333; border-radius: 10px; border: 1px solid #ffcd03; border-radius: 10px; }
+            h2 { color: #ffcd03; text-align: center; }
+            label { display: block; margin-top: 15px; color: #ffcd03; font-weight: bold; }
+            input { width: 100%; padding: 10px; margin-top: 5px; border-radius: 5px; border: 1px solid #555; background: #111; color: white; box-sizing: border-box;}
+            .login-btn { background: #ffcd03; color: black; border: none; padding: 15px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 35px; border-radius: 7px; }
+        </style>
+    </head>
+    <body>
+        <nav>
+        <a href="index.html">Quiz</a>
+        <a href="signup.html">Sign Up</a>
+    </nav>
+
+    <div class="form-container">
+        <h2>Technician Login</h2>
+        <form id="loginForm">
+            <input type="text" id="username" placeholder="Username" required>
+            <input type="password" id="password" placeholder="Password" required>
+            <button type="submit" class="login-btn">Log In</button>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            
+            const response = await fetch('http://127.0.0.1:8000/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ username, password })
+            });
+
+            const result = await response.json();
+            if (result.status === 'success') {
+                alert("Login successful! Welcome ");
+
+            } else {
+                alert("Invalid username or password.");
+            }
+        })
+    </script>
+    </head>
+</html>
