@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Create Account | Diesel Diagnostic</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif; background-color: #222; color: white; line-height: 1.6; margin: 0; }
+        nav { background: #111; padding: 20px; text-align: center; border-bottom: 3px solid #ffcd03; }
+        nav a { color: #ffcd03; text-decoration: none; margin: 0 15px; font-weight: bold; text-transform: uppercase; }
+        .container { max-width: 600px; margin: 50px auto; padding: 20px; background: #333; border-radius: 10px; border: 1px solid #444; }
+        h1 { color: #ffcd03; text-align: center; }
+        label { display: block; margin-top: 15px; color: #ffcd03; font-weight: bold; }
+        input, select, textarea { width: 100%; padding: 10px; margin-top: 5px; border-radius: 5px; border: 1px solid #555; background: #111; color: white; box-sizing: border-box; }
+        .submit-btn { background: #ffcd03; color: black; border: none; padding: 15px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 35px; border-radius: 7px; font-size: 1.2em;}
+        .submit-btn:hover { background: #e6b800;}
+    </style>
+</head>
+<body>
+    
+    <nav>
+        <a href="index.html">Quiz</a>
+        <a href="mission.html">Mission</a>
+        <a href="opportunities.html">Careers</a>
+        <a href="signup.html">Sign Up</a>
+    </nav>
+
+    <div class="form-container">
+        <h2>Create Technician Profile</h2>
+        <form id="signupForm">
+            <label for="username">Username</label>
+            <input type="text" id="username" required placeholder="Pick a handle">
+
+            <label for="email">Email Address</label>
+            <input type="email" id="email" required placeholder="name@example.com">
+
+            <label for="password">Password</label>
+            <input type="password" id="password" required placeholder="Min. 8 characters">
+
+            <label for="confirmPassword">Confirm Password</label>
+            <input type="password" id="confirmPassword" required placeholder="Repeat password">
+
+            <button type="submit" class="signup-btn">Create Secure Account</button>
+        </form>
+        <div class="login-link">
+            Already have an account? <a href="login.html">Log In</a>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('signupForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const password = document.getElementById('password').value;
+            const confirm = document.getElementById('confirmPassword').value;
+
+            // Password requirements logic
+            const minLength = 8;
+            const hasUpperCase = /[A-Z]/.test(password);
+            const hasNumber = /[0-9]/.test(password);
+            const hasSpecial = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+            if (password.length < minLength || !hasUpperCase || !hasNumber || !hasSpecial) {
+                alert("Password must be at least 8 characters long and include an uppercase letter, a number, and a special character.");
+                return;
+            }
+
+            if (password !== confirm) {
+                alert("Passwords do not match!");
+                return;
+            }
+
+
+            const userData = {
+                username: document.getElementById('username').value,
+                email: document.getElementById('email').value,
+                password: password
+            };
+
+            // This will call your FastAPI /register endpoint
+            const response = await fetch('http://127.0.0.1:8000/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(userData)
+            });
+
+            const result = await response.json();
+            if (result.status) {
+                alert("Account created! You can now log in.");
+                window.location.href = "login.html";
+            } else {
+                alert("Error: " + (result.error || "Signup failed"));
+            }
+        });
+    </script>
+</body>
+</html>

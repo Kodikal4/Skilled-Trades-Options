@@ -1,0 +1,405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Skilled Trades Diagnostic Simulator</title>
+    <style>
+        body { 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            background-color: #1a1a1a; 
+            color: #e0e0e0; 
+            margin: 0;
+            padding: 0;
+        }
+    
+        /* Grid Layout: 75% Scanner, 25% Sidebar */
+        .main-layout {
+            display: grid;
+            grid-template-columns: 3fr 1fr;
+            gap: 20px;
+            max-width: 1300px;
+            margin: 40px auto;
+            padding: 20px;
+        }
+
+        /* Left Side: The Diagnostic Terminal */
+        .scanner-card { 
+            background: #262626; 
+            border: 2px solid #ffcd03; 
+            padding: 40px; 
+            border-radius: 5px; 
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            position: relative;
+            transition: border-color 0.3s ease;
+        }
+
+        /* Right Side Layout Containers */
+        .right-panels {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .telemetry-panel {
+            background: #111;
+            border-left: 4px solid #ffcd03;
+            padding: 15px;
+            border-radius: 5px;
+            font-family: 'Courier New', monospace;
+            transition: border-color 0.3s ease;
+        }
+
+        .vitals-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            margin-top: 10px;
+            font-size: 0.9em;
+        }
+
+        .vitals-row {
+            display: flex;
+            justify-content: space-between;
+            border-bottom: 1px dashed #222;
+            padding-bottom: 4px;
+        }
+
+        .vitals-key { color: #888; text-transform: uppercase; }
+        .vitals-val { color: #fff; font-weight: bold; }
+
+        .sidebar {
+            background: #111;
+            border-left: 4px solid #ffcd03;
+            padding: 20px;
+            border-radius: 5px;
+            height: 40vh;
+            overflow-y: auto;
+            transition: border-color 0.3s ease;
+        }
+
+        .log-entry {
+            border-bottom: 1px solid #333;
+            padding: 10px 0;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+        }
+
+        /* Button Styling with smooth transitions */
+        .btn-action { 
+            background: #ffcd03; 
+            color: #111; 
+            border: none; 
+            padding: 12px 25px; 
+            margin: 10px; 
+            cursor: pointer; 
+            font-weight: bold; 
+            text-transform: uppercase; 
+            border-radius: 3px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+        .btn-action:hover {
+            filter: brightness(1.1);
+        }
+        
+        .btn-next { background: #444; color: white; border: 1px solid #555; padding: 10px 20px; cursor: pointer; margin-top: 30px; }
+        .btn-next { display: none; } /* Hide until an answer is picked */
+
+        /* Typewriter Effect */
+        .typewriter {
+            overflow: hidden;
+            white-space: normal;
+            border-right: 3px solid #ffcd03;
+        }
+    </style>
+</head>
+<body>
+    <h1 id="main-title" style="text-align:center; color:#ffcd03; margin-top:30px;">SYSTEM INITIALIZING...</h1>
+    
+    <div class="main-layout">
+        <div class="scanner-card">
+            <h2 id="component" class="typewriter">Initializing Systems...</h2>
+            <p id="symptom" style="font-size: 1.2em; color: #ffcd03; transition: color 0.3s ease;">Awaiting data...</p>
+            
+            <div id="options">
+                <button id="btn-0" class="btn-action"></button>
+                <button id="btn-1" class="btn-action"></button>
+                <button id="btn-2" class="btn-action"></button>
+            </div>
+
+            <p id="result" style="font-weight: bold; margin-top: 20px;"></p>
+            <p id="explanation" style="color: #aaa; font-style: italic; min-height: 40px;"></p>
+            
+            <button class="btn-next" onclick="loadChallenge()">Next Diagnostic Scan</button>
+        </div>
+
+        <div class="right-panels">
+            <div id="vitals-panel" class="telemetry-panel">
+                <h3 id="vitals-title" style="color:#ffcd03; font-size: 0.9em; margin: 0 0 10px 0; letter-spacing: 2px;">LIVE TELEMETRY</h3>
+                <div id="vitals-container" class="vitals-grid">
+                    <div style="color: #555;">[NO TELEMETRY DETECTED]</div>
+                </div>
+            </div>
+
+            <div class="sidebar" id="main-sidebar">
+                <h3 id="sidebar-title" style="color:#ffcd03; font-size: 0.9em; margin: 0 0 10px 0; letter-spacing: 2px;">SERVICE HISTORY LOG</h3>
+                <div id="history-log">
+                    <div class="log-entry" style="color:#555;">[SYSTEM READY]</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="trade-selector-container" style="text-align: center; margin-bottom: 20px;">
+        <label for="trade-select" style="color: #888; font-family: monospace;">SELECT MISSION SECTOR:</label>
+        <select id="trade-select" onchange="loadChallenge()" style="background: #111; color: #ffcd03; border: 1px solid #ffcd03; padding: 10px; font-family: monospace; transition: border-color 0.3s ease, color 0.3s ease;">
+            <option value="Diesel">HEAVY EQUIPMENT (DIESEL)</option>
+            <option value="Lineman">POWER GRID (LINEMAN)</option>
+            <option value="HVAC">HVAC SPECIALIST</option>
+            <option value="PowerPlant">POWER PLANT OPS</option>
+            <option value="Automation">INDUSTRIAL AUTOMATION (PLC)</option> </select>
+    </div>
+</body>
+
+<script>
+    let lastId = null; 
+
+    let sessionCorrect = 0;
+    let sessionTotal = 0;
+    const SESSION_LIMIT = 5; 
+
+    let currentFailureKey = "";
+    let currentComponent = "";
+    let currentExplanation = "";
+    let currentThemeColor = "#ffcd03"; // Track color state for dynamic alerts
+
+    async function loadChallenge() {
+        const tradeButtons = {
+            "Diesel": ["Fuel", "Spark", "Compression"],
+            "Lineman": ["Electrical", "Structural", "Insulation"],
+            "HVAC": ["Electrical", "Airflow", "Restriction"],
+            "PowerPlant": ["Mechanical", "Thermal", "Electrical"],
+            "Automation": ["Electrical", "Parameter", "Mechanical"]
+        };
+
+        const selectedTrade = document.getElementById('trade-select').value;
+        document.getElementById('options').style.display = 'block';
+
+        try {
+            const response = await fetch("https://skilled-trades-api.onrender.com/get-challenge?trade=" + selectedTrade);
+            const data = await response.json();
+
+            if (data.error) {
+                document.getElementById('component').innerText = "SYSTEM ERROR";
+                document.getElementById('symptom').innerText = data.error;
+            } else {
+                lastId = data.id; 
+                currentComponent = data.component;
+                currentFailureKey = data.failure_mode;
+                currentExplanation = data.explanation;
+
+                // Sync UI and button color templates before modifying properties
+                applyTradeTheme(selectedTrade);
+
+                const labels = tradeButtons[selectedTrade] || tradeButtons["Diesel"];
+                labels.forEach((label, index) => {
+                    const btn = document.getElementById(`btn-${index}`);
+                    if (btn) {
+                        btn.innerText = label;
+                        btn.onclick = () => checkAnswer(label); 
+                    }
+                });
+
+                renderVitals(data.vitals);
+
+                const compElement = document.getElementById('component');
+                compElement.style.animation = 'none';
+                compElement.offsetHeight; 
+                compElement.style.animation = null; 
+                
+                compElement.innerText = data.component;
+                document.getElementById('symptom').innerText = "SYMPTOM: " + data.symptom;
+                
+                document.getElementById('result').innerText = "";
+                document.getElementById('explanation').innerText = "";
+                document.querySelector('.btn-next').style.display = "none";
+            }
+        } catch (err) {
+            document.getElementById('component').innerText = "COMMUNICATION FAILURE";
+            document.getElementById('symptom').innerText = "Unable to reach ECM. Check API status.";
+            console.error(err);
+        }
+    }
+
+    function renderVitals(vitalsObj) {
+        const container = document.getElementById('vitals-container');
+        container.innerHTML = ""; 
+        
+        if(!vitalsObj) {
+            container.innerHTML = `<div style="color: #555;">[NO TELEMETRY DATA]</div>`;
+            return;
+        }
+
+        for (const [key, value] of Object.entries(vitalsObj)) {
+            const formattedKey = key.replace('_', ' ');
+            const row = document.createElement('div');
+            row.className = 'vitals-row';
+            row.innerHTML = `
+                <span class="vitals-key">${formattedKey}</span>
+                <span class="vitals-val">${value}</span>
+            `;
+            container.appendChild(row);
+        }
+    }
+
+    function applyTradeTheme(trade) {
+        const scanner = document.querySelector('.scanner-card');
+        const title = document.getElementById('main-title');
+        const telemetry = document.getElementById('vitals-panel');
+        const sidebar = document.getElementById('main-sidebar');
+        const selector = document.getElementById('trade-select');
+        const actionButtons = document.querySelectorAll('.btn-action');
+        const symptomText = document.getElementById('symptom');
+        const vitalsTitle = document.getElementById('vitals-title');
+        const sidebarTitle = document.getElementById('sidebar-title');
+        
+        let targetColor = "#ffcd03";
+        let titleString = "CAT-SCAN DIAGNOSTIC v2.0";
+        let darkText = false;
+
+        if (trade === 'Lineman') {
+            targetColor = "#ff6600";
+            titleString = "UTILITY GRID DIAGNOSTIC v1.0";
+        } else if (trade === 'HVAC') {
+            targetColor = "#00bcff";
+            titleString = "THERMAL FLUID DIAGNOSTIC v1.0";
+        } else if (trade === 'PowerPlant') {
+            targetColor = "#ff3b30";
+            titleString = "GENERATION PLANT INTERFACE v1.0";
+        } else if (trade === 'Automation') {
+            targetColor = "#a020f0";
+            titleString = "AUTOMATION SCADA INTERFACE v1.2";
+        } else {
+            darkText = true; // Use deep dark text for yellow high contrast visibility
+        }
+
+        currentThemeColor = targetColor;
+
+        // Apply theme color bounds globally
+        scanner.style.borderColor = targetColor;
+        telemetry.style.borderColor = targetColor;
+        sidebar.style.borderColor = targetColor;
+        selector.style.borderColor = targetColor;
+        selector.style.color = targetColor;
+        title.style.color = targetColor;
+        title.innerText = titleString;
+        symptomText.style.color = targetColor;
+        vitalsTitle.style.color = targetColor;
+        sidebarTitle.style.color = targetColor;
+
+        // FIXED: Dynamically map layout color palettes to action choice keys
+        actionButtons.forEach(btn => {
+            btn.style.backgroundColor = targetColor;
+            btn.style.color = darkText ? "#111" : "#fff";
+        });
+    }
+
+    async function checkAnswer(choice) {
+        const historyLog = document.getElementById('history-log');
+        const selectedTrade = document.getElementById('trade-select').value; 
+        const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+        const nextBtn = document.querySelector('.btn-next');
+        let logStatus = "";
+
+        sessionTotal++;
+        const isCorrect = currentFailureKey.toLowerCase().includes(choice.toLowerCase());
+
+        if (isCorrect) {
+            sessionCorrect++;
+            document.getElementById('result').innerText = "✅ SYSTEM FAULT IDENTIFIED";
+            document.getElementById('result').style.color = currentThemeColor; // FIXED: Success alerts match active theme context
+            document.getElementById('explanation').innerText = "ANALYSIS: " + currentExplanation;
+            logStatus = "RESOLVED";
+        } else {
+            document.getElementById('result').innerText = "❌ ERRONEOUS DIAGNOSIS";
+            document.getElementById('result').style.color = "#f44336";
+            logStatus = "MISDIAGNOSIS";
+        }
+
+        try {
+            await fetch(`http://127.0.0.1:8000/update-progress`, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    user_id: 1, 
+                    trade: selectedTrade,
+                    is_correct: isCorrect
+                })
+            });
+        } catch (err) {
+
+            
+            const compElement = document.getElementById('component');
+                
+            // Strip the typewriter class styling so long error text wraps naturally
+            compElement.className = ""; 
+            compElement.style.borderRight = "none";
+                
+            compElement.innerText = "COMMUNICATION FAILURE";
+            document.getElementById('symptom').innerText = "Unable to reach ECM. Check API status and CORS configuration.";
+            console.error("Diagnostic Fetch Error:", err);
+        }
+
+        const entry = document.createElement('div');
+        entry.className = 'log-entry';
+        const logColor = logStatus === "RESOLVED" ? currentThemeColor : "#f44336";
+        entry.innerHTML = `<span style="color:#555;">[${time}]</span> ${currentComponent}: <span style="color:${logColor};">${logStatus}</span>`;
+        historyLog.prepend(entry);
+
+        if (sessionTotal >= SESSION_LIMIT) {
+            displayFinalFeedback(sessionCorrect, sessionTotal);
+            nextBtn.style.display = "none"; 
+        } else {
+            nextBtn.style.display = "block"; 
+        }
+    }
+
+    function displayFinalFeedback(correct, total) {
+        const percentage = (correct / total) * 100;
+        const resultEl = document.getElementById('result');
+        const explanationEl = document.getElementById('explanation');
+        const optionsEl = document.getElementById('options');
+
+        optionsEl.style.display = 'none'; 
+        let feedbackColor = percentage >= 60 ? "#4CAF50" : "#ff9800";
+        let statusText = percentage >= 60 ? "🏆 APPRENTICESHIP READY" : "🛠️ FIELD TRAINING REQUIRED";
+
+        resultEl.innerText = statusText;
+        resultEl.style.color = feedbackColor;
+    
+        explanationEl.innerHTML = `
+            <div style="border: 1px solid ${feedbackColor}; padding: 15px; margin-top: 10px; background: #222;">
+                <p>Session Accuracy: ${percentage.toFixed(0)}%</p>
+                <p>${percentage >= 60 ? "Your diagnostic logic meets industry standards." : "Focus on identifying underlying failure modes to improve safety."}</p>
+                <button class="btn-action" style="background-color: ${feedbackColor}; color: #fff;" onclick="resetSimulator()">RESTART SIMULATOR</button>
+            </div>`;
+    }
+
+    function resetSimulator() {
+        sessionTotal = 0;
+        sessionCorrect = 0;
+        lastId = null; 
+        document.getElementById('options').style.display = 'block';
+        document.getElementById('history-log').innerHTML = '<div class="log-entry" style="color:#555;">[SYSTEM REBOOTED]</div>';
+        loadChallenge();
+    }
+
+    window.onload = () => {
+    // A micro-timeout yields execution thread control back to the browser, 
+    // ensuring DOM nodes are completely accessible before the initial API ping.
+        setTimeout(() => {
+            loadChallenge();
+        }, 50);
+   };
+</script>
+</html>

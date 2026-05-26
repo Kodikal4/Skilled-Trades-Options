@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact Us | Diesel Diagnostic</title>
+    <style>
+        body { font-family: 'Segoe UI', sans-serif;  background-color: #222; color: white; line-height: 1.6; margin: 0; }
+        nav { background: #111; padding: 20px; text-align: center; border-bottom: 3px solid #ffcd03; }
+        nav a { color: #ffcd03; text-decoration: none; margin: 0 15px; font-weight: bold; text-transform: uppercase; }
+        .container { max-width: 600px; margin: 50px auto; padding: 20px; background: #333; border-radius: 10px; border: 1px solid #444; }
+        h1 { color: #ffcd03; text-align: center; }
+        label { display: block; margin-top: 15px; color: #ffcd03; font-weight: bold; }
+        input, select, textarea { width: 100%; padding: 10px; margin-top: 5px; border-radius: 5px; border: 1px solid #555; background: #111; color: white; box-sizing: border-box; }
+        .submit-btn { background: #ffcd03; color: black; border: none; padding: 15px; width: 100%; font-weight: bold; cursor: pointer; margin-top: 35px; border-radius: 7px; font-size: 1.2em;  }
+        .submit-btn:hover { background: #e6b800; }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <a href="index.html">Diagnostic Quiz</a>
+        <a href="mission.html">Our Mission</a>
+        <a href="opportunities.html">Career Roadmap</a>
+        <a href="contact.html" style="border: 1px solid #ffcd03; padding: 5px 10px; border-radius: 4px;">Get Started</a>
+    </nav>
+
+    <div class="container">
+        <h1>Join the Journey</h1>
+        <p>Ready to turn your diagnostic skills into a career? Fill out the form below to receive roadmap updates and apprenticeship connections.</p>
+        
+        <form id="interestForm">
+            <label for="name">Full Name</label>
+            <input type="text" id="name" required placeholder="Varun...">
+
+            <label for="email">Email Address</label>
+            <input type="email" id="email" required placeholder="name@example.com">
+
+            <label for="interest">Primary Interest</label>
+            <select id="interest">
+                <option value="heavy-equipment">Heavy Construction Equipment</option>
+                <option value="marine">Marine Engines</option>
+                <option value="power-gen">Power Generation</option>
+                <option value="agricultural">Agricultural Machinery</option>
+            </select>
+
+            <label for="message">Anything else we should know?</label>
+            <textarea id="message" rows="4" placeholder="I'm interested in working at this company..."></textarea>
+
+            <button type="submit" class="submit-btn">Submit Interest</button>
+        </form>
+    </div>
+</body>
+</html>
