@@ -1,43 +1,45 @@
-CREATE TABLE diagnostic_challenges (
-    component TEXT NOT NULL,
-    symptom TEXT NOT NULL,
-    failure_mode TEXT NOT NULL
-);
+-- 1. Wipe out existing sparse rows to prevent clean data overlaps
+DELETE FROM diagnostic_challenges WHERE trade_type IN ('Diesel', 'Lineman', 'HVAC', 'PowerPlant', 'Automation');
 
-CREATE TABLE user_stats (
-    id SERIAL PRIMARY KEY,
-    user_id INTEGER REFERENCES users(id),
-    trade_type TEXT NOT NULL,
-    correct_count INTEGER DEFAULT 0,
-    total_attempts INTEGER DEFAULT 0,
-    last_activity TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-);
+-- 2. Inject the expanded 30-challenge blueprint matrix
+INSERT INTO diagnostic_challenges (trade_type, component, symptom, failure_mode, explanation) VALUES
 
-ALTER TABLE diagnostic_challenges ADD COLUMN explanation TEXT;
-ALTER TABLE diagnostic_challenges ADD COLUMN trade_type TEXT DEFAULT 'Diesel';
+-- 🚜 HEAVY EQUIPMENT (DIESEL)
+('Diesel', 'Common Rail Injector', 'Engine misfiring on Cylinder 3; white smoke billowing heavily from exhaust assembly.', 'Fuel', 'Internal injector needle valve stuck open, continuously dribbling unatomized raw diesel into the combustion chamber.'),
+('Diesel', 'Glow Plug Control Module', 'Severe cold-start difficulty; white smoke and rough idle observed during morning cranking.', 'Spark', 'Control relay failure preventing pre-heating voltage from reaching the combustion chambers during low ambient temps.'),
+('Diesel', 'Variable Geometry Turbocharger (VGT)', 'Engine sluggish under load; low boost pressure DTC thrown with high exhaust gas temps.', 'Compression', 'Carbon accumulation binding the internal aerodynamic vanes, locking the turbocharger in a low-aspect ratio geometry.'),
+('Diesel', 'High-Pressure Fuel Pump (HPFP)', 'Engine cranks smoothly but refuses to catch or start; fuel rail pressure sensor registers near 0 PSI.', 'Fuel', 'Internal mechanical tracking wear or structural failure of the main drive cam, stopping fuel pressure buildup.'),
+('Diesel', 'Intake Air Throttle Valve', 'Engine starts and immediately stalls; thick black smoke observed during transient throttle tips.', 'Compression', 'Mechanical butterfly valve plate stuck shut due to heavy EGR soot accumulation, choking the fresh air supply.'),
+('Diesel', 'Intake Manifold Gasket', 'Hissing sound audible near the cylinder head under load; erratic manifold absolute pressure sensor metrics.', 'Compression', 'Physical blowout along the cylinder sealing surface, creating a localized high-pressure induction leak.'),
 
--- Insert a few Caterpillar-specific diagnostic challenges
-INSERT INTO diagnostic_challenges (component, symptom, failure_mode) VALUES 
-('Fuel Injector', 'Engine cranks but won''t fire; smoke from exhaust is absent.', 'Fuel'),
-('Glow Plugs', 'Difficult cold start in winter conditions.', 'Spark'),
-('Cylinder Head', 'White smoke and loss of power; bubbles in coolant.', 'Compression'),
-('High Pressure Pump', 'Engine stalls under heavy load; low rail pressure code.', 'Fuel');
+-- ⚡ POWER GRID (LINEMAN)
+('Lineman', 'Step-Down Transformer', 'Humming noise abnormally loud; oil temperature spiking past thermal thresholds.', 'Electrical', 'Internal winding degradation causing inductive eddy current shorting across internal transformer coils.'),
+('Lineman', 'Air-Break Disconnect Switch', 'Severe localized arcing visible through visual sensors upon automated mechanical closure.', 'Structural', 'Contact jaw misalignment or physical pitting prevents uniform mechanical connection, causing high-resistance voltage tracking.'),
+('Lineman', 'Substation Insulator String', 'Spontaneous ceramic surface tracking flashovers during minor early morning ambient mist cycles.', 'Insulation', 'Salt-spray or atmospheric particulate pollution accumulation lowering nominal dialectic flashover resistance properties.'),
+('Lineman', 'SF6 Gas Circuit Breaker', 'Low gas pressure telemetry alarm triggered; diagnostic sensor records dielectric breakdown tracking.', 'Insulation', 'Degraded synthetic O-ring seals leaking core sulfur hexafluoride gas, compromising the arc-quenching atmosphere.'),
+('Lineman', 'Overhead Cross-Arm Assembly', 'Structural wooden support beam displaying cross-grain structural splitting and noticeable sagging under load.', 'Structural', 'Advanced fungal dry-rot degradation accelerated by repetitive environmental weather cycles and localized mechanical stress.'),
+('Lineman', 'Surge Arrester Block', 'Ground monitoring current loops detect high leakage current to the structural earth grid.', 'Electrical', 'Internal metal-oxide varistor (MOV) discs degraded by consecutive transient lightning or overvoltage switching strikes.'),
 
-INSERT INTO diagnostic_challenges (component, symptom, failure_mode, explanation, trade_type) VALUES 
-('Step Transformer', 'Audible humming and oil residue on the casing.', 'Electrical', 'Internal winding failure or bushing leak causing overheating.', 'Lineman'),
-('Suspension Insulator', 'Visible flashover scars and carbon tracking.', 'Insulation', 'Contamination on the surface allowed electricity to arc across.', 'Lineman'),
-('Cross-arm', 'Noticeable sagging and hairline timber fractures.', 'Structural', 'Wood rot or extreme mechanical stress from line tension.', 'Lineman'),
-('Capacitor Bank', 'Low power factor readings and phase imbalance.', 'Electrical', 'Blown internal fuses or capacitor cell rupture.', 'Lineman'),
-('Guy Wire', 'Severe corrosion and lack of tension on a leaning pole.', 'Structural', 'Anchor point failure or oxidation of the galvanized steel.', 'Lineman');
+-- ❄️ HVAC SPECIALIST
+('HVAC', 'Scroll Compressor Node', 'Thermal overload switch tripping within three minutes of system compressor startup engagement.', 'Electrical', 'Internal motor winding short-to-ground or seized structural mechanical scroll elements causing an extreme current draw surge.'),
+('HVAC', 'Centrifugal Evaporator Coil', 'System static air delivery velocity drops below nominal CFM values; superficial frosting noted.', 'Airflow', 'Restricted secondary pleated inline filtration media or systemic blower belt slippage limiting vital airflow exchange.'),
+('HVAC', 'Thermal Expansion Valve (TXV)', 'Suction line displaying excessive superheat metrics alongside anomalously low system suction head pressure.', 'Restriction', 'Internal mechanical needle valve orifice clogging from carbonized compressor oil sludge or moisture freezing inside the seat.'),
+('HVAC', 'Blower Motor Run Capacitor', 'Indoor fan unit hums loudly when thermostat calls for cooling, but the fan blades do not rotate.', 'Electrical', 'Internal structural dielectric breakdown within the capacitor casing, dropping capacitance below the motor start threshold.'),
+('HVAC', 'Liquid Line Filter Drier', 'Frost or condensation forming directly on the output side of the filter drier block along the liquid line.', 'Restriction', 'Desiccant core collapse inside the metal shell capturing debris and creating an accidental secondary expansion restriction.'),
+('HVAC', 'Forward-Curve Fan Wheel', 'Severe vibration through the central ductwork trunk line accompanied by loud rhythmic thumping sounds.', 'Airflow', 'Heavy dust imbalance or broken fan blades causing a violent center-of-mass mechanical deviation across the blower assembly.'),
 
--- 1. HVAC Specialist Challenges
-INSERT INTO diagnostic_challenges (component, symptom, failure_mode, explanation, trade_type) VALUES 
-('Compressor', 'Unit hums loudly but will not start; thermal overload trips quickly.', 'Electrical', 'Failed start capacitor or locked rotor condition preventing mechanical rotation.', 'HVAC'),
-('Evaporator Coil', 'System runs constantly but airflow is low and ice buildup is visible.', 'Airflow', 'Restricted air movement due to a severely clogged filter or dirty coil surfaces.', 'HVAC'),
-('TXV (Thermal Expansion Valve)', 'Suction pressure is unusually low; high superheat at evaporator outlet.', 'Restriction', 'The valve orifice is restricted or the sensing bulb has lost its charge, starving the coil.', 'HVAC');
+-- ☢️ POWER PLANT OPERATIONS
+('PowerPlant', 'Main Steam Turbine Shaft', 'Radial bearing displacement sensor detects high-frequency harmonic vibration signatures above 4.5 mils.', 'Mechanical', 'Thermal distortion along the primary rotor shaft caused by a rapid startup cycle or asymmetrical steam nozzle distribution.'),
+('PowerPlant', 'Main Condenser Shell', 'Vacuum pressure indicators decay steadily from standard operating mercury bars.', 'Thermal', 'Micro-fractures along structural weld seams or failing condenser tube-sheets letting atmospheric gases breach the thermal vacuum space.'),
+('PowerPlant', 'Exciter Brush Array', 'Excessive sparking observed along the generator interface slip rings accompanied by rotor voltage drops.', 'Electrical', 'Asymmetrical physical wear or spring tension decay across carbon contact brushes creating transient arc paths.'),
+('PowerPlant', 'Boiler Feedwater Pump (BFP)', 'High-pressure pump casing squealing; suction side pressure transducers dropping below vapor pressure thresholds.', 'Mechanical', 'Cavitation taking place inside the impeller stages due to low subcooling margins in the deaerator storage tank.'),
+('PowerPlant', 'Deaerator Vent Valve', 'Dissolved oxygen levels in the condensate stream spiking upward, risking boiler tube oxidation.', 'Thermal', 'The mechanical stripping vent valve stuck in the fully closed position, locking non-condensable corrosive gases in the tank.'),
+('PowerPlant', 'Step-Up Transformer Bushing', 'Dissolved Gas Analysis (DGA) sample indicates a heavy spike in combustible acetylene gas particles.', 'Electrical', 'High-energy localized electrical arcing taking place deep inside the porcelain insulation bushing core connection.'),
 
--- 2. Power Plant Ops Challenges
-INSERT INTO diagnostic_challenges (component, symptom, failure_mode, explanation, trade_type) VALUES 
-('Steam Turbine', 'Sudden spike in high-frequency vibration readings at 3600 RPM.', 'Mechanical', 'Blade scaling or rotor imbalance causing dynamic distortion under full load.', 'PowerPlant'),
-('Condenser', 'Back-pressure is rising steadily; cooling water temperature delta is dropping.', 'Thermal', 'Tube fouling or air ingress reducing heat transfer efficiency in the vacuum stage.', 'PowerPlant'),
-('Exciter', 'Main generator output voltage dropping while rotor speed remains stable.', 'Electrical', 'Loss of residual magnetism or brush wear interrupting the field excitation current.', 'PowerPlant');
+-- 🤖 INDUSTRIAL AUTOMATION (PLC)
+('Automation', 'Optocoupler Input Module', 'Field sensor status LED lights up perfectly on the rack, but the PLC logic register remains persistently low.', 'Electrical', 'Internal solid-state optoisolator LED failure on the input card preventing logic-side voltage transition tracking.'),
+('Automation', 'Proportional Hydraulic Valve', 'Actuator mechanical movement tracks erratically and overshoots programmed setpoints consistently.', 'Parameter', 'Proportional-Integral-Derivative (PID) loop gain coefficients configured too aggressively inside the logic controller task routine.'),
+('Automation', 'Pneumatic Pick-and-Place Gantry', 'Linear carriage fails to reach axis limit switches within the designated safety window time bounds.', 'Mechanical', 'Loss of pneumatic supply pressure via line leaks or guide-rail binding due to particulate contamination.'),
+('Automation', 'Shielded VFD Motor Cable', 'Analog weight transmitter signals drifting and spiking randomly whenever the main conveyor belt motor speeds up.', 'Electrical', 'Broken or improperly ungrounded foil shield on the Variable Frequency Drive motor cable radiating raw EMI into nearby instrumentation wires.'),
+('Automation', 'PLC Backplane Power Supply', 'Entire rack drops offline intermittently; status indicator flickering between green and red system faults.', 'Parameter', 'Overloading total 5V DC backplane current availability capacity by installing too many power-hungry analog modules.'),
+('Automation', 'Magnetic Inductive Flowmeter', 'Flow metrics displaying persistent zero-reading errors despite structural sight-glass verifying active fluid movement.', 'Mechanical', 'Non-conductive grease coating or particulate buildup insulating the internal measuring electrodes inside the flow tube body.');

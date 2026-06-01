@@ -115,6 +115,61 @@
 </head>
 <body>
     <h1 id="main-title" style="text-align:center; color:#ffcd03; margin-top:30px;">SYSTEM INITIALIZING...</h1>
+
+    <!-- Full-Width Hero Welcome Screen -->
+    <div id="welcome-screen" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0a0a0a; z-index: 1000; display: flex; flex-direction: column; font-family: monospace; overflow-y: auto;">
+        
+        <!-- TOP: Hero Image Background Section -->
+        <div style="width: 100%; height: 45vh; min-height: 300px; background: linear-gradient(to bottom, rgba(10,10,10,0.2), #0a0a0a), url('Trades.jpg'); background-size: cover; background-position: center; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding-bottom: 20px;">
+            <h1 style="color: #ff9800; font-size: 3em; margin: 0; text-transform: uppercase; letter-spacing: 4px; text-shadow: 2px 2px 10px rgba(0,0,0,0.8); text-align: center;">Skilled Trades Academy</h1>
+        </div>
+
+        <!-- BOTTOM: Content & Selection Section -->
+        <div style="flex: 1; display: flex; flex-direction: column; align-items: center; padding: 20px 40px 40px 40px;">
+            
+            <p style="color: #888; margin-bottom: 30px; font-size: 1.1em; text-align: center; max-width: 600px; line-height: 1.5;">
+                Test your field intuition across 5 industrial engineering sectors. <br>
+                Isolate system faults under real-world telemetry parameters.
+            </p>
+
+            <div style="width: 100%; max-width: 450px; background: #151515; border: 1px solid #333; padding: 30px; border-radius: 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+                <h3 style="color: #fff; margin-top: 0; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #222; padding-bottom: 15px; text-align: center;">Mission Configuration</h3>
+                
+                <label style="color: #888; font-size: 0.8em; display: block; margin-bottom: 8px; font-weight: bold;">SELECT SECTOR NODE:</label>
+                <select id="landing-trade-select" style="width: 100%; padding: 15px; background: #000; color: #ff9800; border: 1px solid #444; border-radius: 4px; font-family: monospace; font-size: 1.1em; cursor: pointer; margin-bottom: 25px; outline: none; transition: border-color 0.3s;">
+                    <option value="Diesel">HEAVY EQUIPMENT DIESEL (v2.0)</option>
+                    <option value="Lineman">POWER GRID LINEMAN (v1.0)</option>
+                    <option value="HVAC">HVAC SPECIALIST (v1.0)</option>
+                    <option value="PowerPlant">POWER PLANT OPERATIONS (v1.0)</option>
+                    <option value="Automation">INDUSTRIAL AUTOMATION PLC (v1.2)</option>
+                </select>
+
+                <button onclick="launchSimulator()" style="width: 100%; padding: 18px; background: #ff9800; color: #000; border: none; font-weight: bold; font-family: monospace; font-size: 1.2em; cursor: pointer; border-radius: 4px; text-transform: uppercase; letter-spacing: 2px; transition: transform 0.1s, background 0.2s;" onmouseover="this.style.background='#ffb74d'" onmouseout="this.style.background='#ff9800'">
+                    Initialize Mission
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px;">
+        <div style="width: 100%; max-width: 400px; background: #151515; border: 1px solid #333; padding: 30px; border-radius: 4px;">
+            <h3 style="color: #fff; margin-top: 0; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #222; padding-bottom: 10px;">Select Specialty Sector</h3>
+            
+            <label style="color: #aaa; font-size: 0.85em; display: block; margin-bottom: 8px;">MISSION SECTOR:</label>
+            <select id="landing-trade-select" style="width: 100%; padding: 12px; background: #000; color: #ff9800; border: 1px solid #ff9800; border-radius: 4px; font-family: monospace; font-size: 1em; cursor: pointer; margin-bottom: 25px;">
+                <option value="Diesel">HEAVY EQUIPMENT DIESEL (v2.0)</option>
+                <option value="Lineman">POWER GRID LINEMAN (v1.0)</option>
+                <option value="HVAC">HVAC SPECIALIST (v1.0)</option>
+                <option value="PowerPlant">POWER PLANT OPERATIONS (v1.0)</option>
+                <option value="Automation">INDUSTRIAL AUTOMATION PLC (v1.2)</option>
+            </select>
+
+            <button onclick="launchSimulator()" style="width: 100%; padding: 15px; background: #ff9800; color: #000; border: none; font-weight: bold; font-family: monospace; font-size: 1.1em; cursor: pointer; border-radius: 4px; text-transform: uppercase; letter-spacing: 1px; transition: background 0.2s;">
+                Initialize Simulator Mission
+            </button>
+        </div>
+    </div>
+    </div>
     
     <div class="main-layout">
         <div class="scanner-card">
@@ -152,26 +207,68 @@
 
     <div class="trade-selector-container" style="text-align: center; margin-bottom: 20px;">
         <label for="trade-select" style="color: #888; font-family: monospace;">SELECT MISSION SECTOR:</label>
-        <select id="trade-select" onchange="loadChallenge()" style="background: #111; color: #ffcd03; border: 1px solid #ffcd03; padding: 10px; font-family: monospace; transition: border-color 0.3s ease, color 0.3s ease;">
+        <select id="trade-select" onchange="handleTradeChange()" style="background: #111; color: #ffcd03; border: 1px solid #ffcd03; padding: 10px; font-family: monospace; transition: border-color 0.3s ease, color 0.3s ease;">
             <option value="Diesel">HEAVY EQUIPMENT (DIESEL)</option>
             <option value="Lineman">POWER GRID (LINEMAN)</option>
             <option value="HVAC">HVAC SPECIALIST</option>
             <option value="PowerPlant">POWER PLANT OPS</option>
-            <option value="Automation">INDUSTRIAL AUTOMATION (PLC)</option> </select>
+            <option value="Automation">INDUSTRIAL AUTOMATION (PLC)</option> 
+        </select>
     </div>
 </body>
 
 <script>
-    let lastId = null; 
+    // Track the last seen ID uniquely for each trade sector to avoid cross-contamination
+    const lastIdByTrade = {
+        "Diesel": null,
+        "Lineman": null,
+        "HVAC": null,
+        "PowerPlant": null,
+        "Automation": null
+    };
 
     let sessionCorrect = 0;
     let sessionTotal = 0;
-    const SESSION_LIMIT = 5; 
+    const SESSION_LIMIT = 6; 
 
     let currentFailureKey = "";
     let currentComponent = "";
     let currentExplanation = "";
-    let currentThemeColor = "#ffcd03"; // Track color state for dynamic alerts
+    let currentThemeColor = "#ffcd03"; 
+
+    // Triggered whenever the user manually updates the mission drop-down selector
+    function handleTradeChange() {
+        // Clear previous question descriptions out of view so old content doesn't linger
+        document.getElementById('component').innerText = "Loading Sector Node...";
+        document.getElementById('symptom').innerText = "Awaiting structural telemetry stream...";
+        document.getElementById('result').innerText = "";
+        document.getElementById('explanation').innerText = "";
+        
+        // Load the fresh sector challenge
+        loadChallenge();
+    }
+
+    function launchSimulator() {
+        const selectedValue = document.getElementById('landing-trade-select').value;
+        
+        // Sync the selector with your original bottom dropdown menu
+        const mainSelect = document.getElementById('trade-select');
+        if (mainSelect) {
+            mainSelect.value = selectedValue;
+            // Trigger your existing function to change styles/headers matching the trade
+            mainSelect.dispatchEvent(new Event('change')); 
+        }
+
+        // Smoothly remove the landing overlay
+        const welcomeOverlay = document.getElementById('welcome-screen');
+        welcomeOverlay.style.transition = "opacity 0.4s ease";
+        welcomeOverlay.style.opacity = "0";
+        
+        setTimeout(() => {
+            welcomeOverlay.style.display = "none";
+            // Call your backend/database initialization loop here if needed (e.g., fetchQuestions())
+        }, 400);
+    }
 
     async function loadChallenge() {
         const tradeButtons = {
@@ -186,19 +283,30 @@
         document.getElementById('options').style.display = 'block';
 
         try {
-            const response = await fetch("https://skilled-trades-api.onrender.com/get-challenge?trade=" + selectedTrade);
+            // Pull the last seen ID specifically for THIS trade sector
+            let url = `http://127.0.0.1:8000/get-challenge?trade=${selectedTrade}`;
+            const targetLastId = lastIdByTrade[selectedTrade];
+            
+            if (targetLastId) {
+                url += `&last_id=${targetLastId}`;
+            }
+
+            const response = await fetch(url);
             const data = await response.json();
 
             if (data.error) {
-                document.getElementById('component').innerText = "SYSTEM ERROR";
-                document.getElementById('symptom').innerText = data.error;
+                const compElement = document.getElementById('component');
+                compElement.className = ""; 
+                compElement.innerText = "DATABASE EMPTY";
+                document.getElementById('symptom').innerText = "Message: " + data.error + " (Please seed the diagnostic_challenges table).";
             } else {
-                lastId = data.id; 
+                // Save the new ID into our trade-specific storage map
+                lastIdByTrade[selectedTrade] = data.id; 
+                
                 currentComponent = data.component;
                 currentFailureKey = data.failure_mode;
                 currentExplanation = data.explanation;
 
-                // Sync UI and button color templates before modifying properties
                 applyTradeTheme(selectedTrade);
 
                 const labels = tradeButtons[selectedTrade] || tradeButtons["Diesel"];
@@ -206,6 +314,7 @@
                     const btn = document.getElementById(`btn-${index}`);
                     if (btn) {
                         btn.innerText = label;
+                        btn.onclick = null;
                         btn.onclick = () => checkAnswer(label); 
                     }
                 });
@@ -216,17 +325,17 @@
                 compElement.style.animation = 'none';
                 compElement.offsetHeight; 
                 compElement.style.animation = null; 
-                
+                    
                 compElement.innerText = data.component;
                 document.getElementById('symptom').innerText = "SYMPTOM: " + data.symptom;
-                
+                    
                 document.getElementById('result').innerText = "";
                 document.getElementById('explanation').innerText = "";
                 document.querySelector('.btn-next').style.display = "none";
             }
         } catch (err) {
             document.getElementById('component').innerText = "COMMUNICATION FAILURE";
-            document.getElementById('symptom').innerText = "Unable to reach ECM. Check API status.";
+            document.getElementById('symptom').innerText = "Unable to reach ECM. Check local API status configuration.";
             console.error(err);
         }
     }
@@ -280,12 +389,11 @@
             targetColor = "#a020f0";
             titleString = "AUTOMATION SCADA INTERFACE v1.2";
         } else {
-            darkText = true; // Use deep dark text for yellow high contrast visibility
+            darkText = true; 
         }
 
         currentThemeColor = targetColor;
 
-        // Apply theme color bounds globally
         scanner.style.borderColor = targetColor;
         telemetry.style.borderColor = targetColor;
         sidebar.style.borderColor = targetColor;
@@ -297,7 +405,6 @@
         vitalsTitle.style.color = targetColor;
         sidebarTitle.style.color = targetColor;
 
-        // FIXED: Dynamically map layout color palettes to action choice keys
         actionButtons.forEach(btn => {
             btn.style.backgroundColor = targetColor;
             btn.style.color = darkText ? "#111" : "#fff";
@@ -317,7 +424,7 @@
         if (isCorrect) {
             sessionCorrect++;
             document.getElementById('result').innerText = "✅ SYSTEM FAULT IDENTIFIED";
-            document.getElementById('result').style.color = currentThemeColor; // FIXED: Success alerts match active theme context
+            document.getElementById('result').style.color = currentThemeColor; 
             document.getElementById('explanation').innerText = "ANALYSIS: " + currentExplanation;
             logStatus = "RESOLVED";
         } else {
@@ -337,17 +444,7 @@
                 })
             });
         } catch (err) {
-
-            
-            const compElement = document.getElementById('component');
-                
-            // Strip the typewriter class styling so long error text wraps naturally
-            compElement.className = ""; 
-            compElement.style.borderRight = "none";
-                
-            compElement.innerText = "COMMUNICATION FAILURE";
-            document.getElementById('symptom').innerText = "Unable to reach ECM. Check API status and CORS configuration.";
-            console.error("Diagnostic Fetch Error:", err);
+            console.error("Local stats tracker logging skipped:", err);
         }
 
         const entry = document.createElement('div');
@@ -376,30 +473,73 @@
 
         resultEl.innerText = statusText;
         resultEl.style.color = feedbackColor;
+
+        const resourcesByTrade = {
+            "Diesel": [
+                "📘 <em>Caterpillar Performance Handbook</em> – Engine Diagnostics Sections",
+                "📙 <em>ASE Medium/Heavy Truck Technician Study Guide</em> (T2 - Diesel Engines)"
+            ],
+            "Lineman": [
+                "📘 <em>The Lineman's and Cableman's Handbook</em> – Grid Substation Faults",
+                "📙 <em>OSHA Title 29 CFR Part 1910.269</em> – High-Voltage Power Safety Standards"
+            ],
+            "HVAC": [
+                "📘 <em>Modern Refrigeration and Air Conditioning</em> – TXV & Refrigerant Cycle Troubleshooting",
+                "📙 <em>Air Conditioning Contractors of America (ACCA)</em> – Manual D & Manual Q Reference Sheets"
+            ],
+            "PowerPlant": [
+                "📘 <em>Power Plant Engineering</em> – Steam Turbine Dynamics & Generator Diagnostics",
+                "📙 <em>EPRI (Electric Power Research Institute)</em> – Rotating Machinery Maintenance Standards"
+            ],
+            "Automation": [
+                "📘 <em>Programmable Logic Controllers</em> (Petruzella) – Discrete & Analog I/O Troubleshooting",
+                "📙 <em>NFPA 79</em> – Electrical Standard for Industrial Machinery Diagnostics"
+            ]
+        };
+
+        // Grab resources for the currently active trade
+        const selectedTrade = document.getElementById('trade-select').value;
+        const activeResources = resourcesByTrade[selectedTrade] || resourcesByTrade["Diesel"];
+
+        // Build the bullet points HTML string dynamically
+        let resourceListHTML = "";
+        activeResources.forEach(res => {
+            resourceListHTML += `<li style="margin-bottom: 8px; color: #fff;">${res}</li>`;
+        });
     
         explanationEl.innerHTML = `
-            <div style="border: 1px solid ${feedbackColor}; padding: 15px; margin-top: 10px; background: #222;">
-                <p>Session Accuracy: ${percentage.toFixed(0)}%</p>
-                <p>${percentage >= 60 ? "Your diagnostic logic meets industry standards." : "Focus on identifying underlying failure modes to improve safety."}</p>
-                <button class="btn-action" style="background-color: ${feedbackColor}; color: #fff;" onclick="resetSimulator()">RESTART SIMULATOR</button>
-            </div>`;
+        <div style="border: 1px solid ${feedbackColor}; padding: 20px; margin-top: 15px; background: #111; border-radius: 4px;">
+            <p style="font-size: 1.1em; margin-top: 0;">Session Accuracy: <strong style="color: ${feedbackColor};">${percentage.toFixed(0)}%</strong></p>
+            <p style="color: #ccc; font-size: 0.95em; line-height: 1.4;">
+                ${percentage >= 60 ? "Your diagnostic logic meets strict field industry standards. Continue practicing to maintain diagnostic precision." : "Focus closely on identifying core failure modes vs superficial symptoms to improve field safety outcomes."}
+            </p>
+            
+            <hr style="border: 0; border-top: 1px solid #333; margin: 15px 0;">
+            
+            <h4 style="color: ${currentThemeColor}; margin: 0 0 10px 0; letter-spacing: 1px; font-size: 0.9em; text-transform: uppercase;">📚 Recommended Sector Materials:</h4>
+            <ul style="padding-left: 20px; margin: 0 0 20px 0; font-size: 0.9em; text-align: left;">
+                ${resourceListHTML}
+            </ul>
+            
+            <button class="btn-action" style="background-color: ${feedbackColor}; color: #fff; width: 100%; margin: 0;" onclick="resetSimulator()">RESTART SIMULATOR MISSION</button>
+        </div>`;
     }
 
     function resetSimulator() {
         sessionTotal = 0;
         sessionCorrect = 0;
-        lastId = null; 
+        // Clean out our storage dictionary tracking completely
+        for (let key in lastIdByTrade) {
+            lastIdByTrade[key] = null;
+        }
         document.getElementById('options').style.display = 'block';
         document.getElementById('history-log').innerHTML = '<div class="log-entry" style="color:#555;">[SYSTEM REBOOTED]</div>';
         loadChallenge();
     }
 
     window.onload = () => {
-    // A micro-timeout yields execution thread control back to the browser, 
-    // ensuring DOM nodes are completely accessible before the initial API ping.
         setTimeout(() => {
             loadChallenge();
         }, 50);
-   };
+    };
 </script>
-</html>
