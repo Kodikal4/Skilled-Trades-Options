@@ -305,7 +305,7 @@
                 const excludeParam = usedIds.length > 0 ? `&exclude_ids=${usedIds.join(',')}` : '';
         
                 // Target live Azure Web App API endpoints
-                let url = `https://trade-skills.azurewebsites.net/get-challenge?trade=${selectedTrade}${excludeParam}`;
+                let url = `https://trade-skills-gmezhxcxf7gddaby.centralus-01.azurewebsites.net/get-challenge?trade=${selectedTrade}${excludeParam}`;
 
                 const response = await fetch(url);
                 const data = await response.json();
@@ -439,7 +439,7 @@
 
             try {
                 // Post asynchronous telemetry stats directly to live Azure database route
-                await fetch(`https://trade-skills.azurewebsites.net/update-progress`, {
+                await fetch(`https://trade-skills-gmezhxcxf7gddaby.centralus-01.azurewebsites.net/update-progress`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({
