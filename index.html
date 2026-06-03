@@ -347,7 +347,9 @@
         try {
             const usedIds = usedIdsByTrade[selectedTrade];
             const excludeParam = usedIds.length > 0 ? `&exclude_ids=${usedIds.join(',')}` : '';
-            let url = `http://127.0.0.1:8000/get-challenge?trade=${selectedTrade}${excludeParam}`;
+    
+            // 🔗 Target your exact live Azure domain route
+            let url = `https://trade-skills.azurewebsites.net/get-challenge?trade=${selectedTrade}${excludeParam}`;
 
             const response = await fetch(url);
             const data = await response.json();
@@ -480,7 +482,7 @@
         }
 
         try {
-            await fetch(`http://127.0.0.1:8000/update-progress`, {
+            await fetch(`https://trade-skills.azurewebsites.net/update-progress`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
