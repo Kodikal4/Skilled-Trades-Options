@@ -73,7 +73,7 @@
             border-left: 4px solid #ffcd03;
             padding: 20px;
             border-radius: 5px;
-            height: 40vh;
+            height: 70vh; /* <-- INCREASE THIS from 40vh to 70vh or 75vh */
             overflow-y: auto;
             transition: border-color 0.3s ease;
         }
@@ -151,6 +151,77 @@
         </div>
     </div>
 
+    <div id="resources-page" style="background: #0a0a0a; color: #eee; padding: 40px; font-family: monospace;">
+    
+        <!-- Header with Branding -->
+        <div style="border-bottom: 2px solid #ff9800; padding-bottom: 20px; margin-bottom: 40px;">
+            <h1 style="color: #ff9800; text-transform: uppercase; letter-spacing: 2px;">Technical Mastery Hub</h1>
+            <p style="color: #888;">Curated documentation and field guides for skilled technicians.</p>
+        </div>
+
+        <!-- Grid Container -->
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 25px;">
+            
+            <!-- Section: Diesel Technology -->
+            <div style="background: #151515; border: 1px solid #333; padding: 20px; border-radius: 8px;">
+                <h3 style="color: #ff9800; border-bottom: 1px solid #222; padding-bottom: 10px;">🚜 HEAVY EQUIPMENT DIESEL</h3>
+                <ul style="list-style: none; padding: 0; line-height: 2;">
+                    <li><a href="https://d6s74no67skb0.cloudfront.net/course-material/ME406-Diesel-Engine-Fundamentals.pdf" style="color: #4db8ff; text-decoration: none;">→ Fuel System Pressure Specs (PDF)</a></li>
+                    <li><a href="https://media.defense.gov/2014/Jun/20/2002655897/-1/-1/1/140620-N-ZZ182-6546.pdf" style="color: #4db8ff; text-decoration: none;">→ Troubleshooting Fault Code MID 128</a></li>
+                    <li><a href="https://www.youtube.com/watch?v=io-V6hShyfg" style="color: #4db8ff; text-decoration: none;">→ Common Rail Injector Teardown Video</a></li>
+                </ul>
+            </div>
+
+            <!-- Section: Electrical/Lineman -->
+            <div style="background: #151515; border: 1px solid #333; padding: 20px; border-radius: 8px;">
+                <h3 style="color: #ff9800; border-bottom: 1px solid #222; padding-bottom: 10px;">⚡ POWER GRID & ELECTRICAL</h3>
+                <ul style="list-style: none; padding: 0; line-height: 2;">
+                    <li><a href="https://www.nfpa.org/codes-and-standards/nfpa-70-standard-development/70" style="color: #4db8ff; text-decoration: none;">→ NFPA 70: National Electrical Code</a></li>
+                    <li><a href="https://cdn.automationdirect.com/static/manuals/hpsimperator/wiring.pdf" style="color: #4db8ff; text-decoration: none;">→ Transformer Wiring Diagrams</a></li>
+                    <li><a href="https://www.youtube.com/watch?v=KltZQiUa4EA" style="color: #4db8ff; text-decoration: none;">→ Arc Flash Safety Procedures</a></li>
+                </ul>
+            </div>
+
+            <!-- Section: HVAC -->
+            <div style="background: #151515; border: 1px solid #333; padding: 20px; border-radius: 8px;">
+                <h3 style="color: #ff9800; border-bottom: 1px solid #222; padding-bottom: 10px;">❄️ HVAC/R SYSTEMS</h3>
+                <ul style="list-style: none; padding: 0; line-height: 2;">
+                    <li><a href="https://www.aireserv.com/about/blog/heating-and-cooling-basics/" style="color: #4db8ff; text-decoration: none;">Basics of HVAC Systems</a></li>
+                    <li><a href="https://www.ashrae.org/professional-development/all-instructor-led-training/catalog-of-instructor-led-training/hvac-design-level-i-essentials-18-hour" style="color: #4db8ff; text-decoration: none;">→ Superheat & Subcooling Calculator</a></li>
+                    <li><a href="https://www.youtube.com/watch?v=644g-M63NLI" style="color: #4db8ff; text-decoration: none;">→ Compressor Ohm Testing Guide</a></li>
+                </ul>
+            </div>
+
+            <!-- Section: Power Plant -->
+            <div style="background: #151515; border: 1px solid #333; padding: 20px; border-radius: 8px;">
+                <h3 style="color: #ff9800; border-bottom: 1px solid #222; padding-bottom: 10px;">🏭 POWER PLANT OPERATIONS</h3>
+                <ul style="list-style: none; padding: 0; line-height: 2;">
+                    <li><a href="https://www.energy.gov/sites/prod/files/2023-06/Power_Plant_Operations_Guide.pdf" style="color: #4db8ff; text-decoration: none;">→ Power Plant Operations Guide (PDF)</a></li>
+                    <li><a href="https://www.youtube.com/watch?v=QV9X7GzJzZo" style="color: #4db8ff; text-decoration: none;">→ Turbine Maintenance Procedures</a></li>
+                    <li><a href="https://www.nuclearenergy.gov/sites/default/files/2021-09/Nuclear_Power_Plant_Safety_Procedures.pdf" style="color: #4db8ff; text-decoration: none;">→ Nuclear Power Plant Safety Procedures (PDF)</a></li>
+                </ul>
+            </div>
+
+            <!-- Section: Industrial Automation -->
+            <div style="background: #151515; border: 1px solid #333
+                ; padding: 20px; border-radius: 8px;">
+                <h3 style="color: #ff9800; border-bottom: 1px solid #222; padding-bottom: 10px;">🤖 INDUSTRIAL AUTOMATION (PLC)</h3>
+                <ul style="list-style: none; padding: 0; line-height: 2;">
+                    <li><a href="https://www.rockwellautomation.com/en-us/products/hardware/allen-bradley/programmable-controllers.html" style="color: #4db8ff; text-decoration: none;">→ Allen-Bradley PLC Catalog</a></li>
+                    <li><a href="https://www.youtube.com/watch?v=5Xjv9sJqkLw" style="color: #4db8ff; text-decoration: none;">→ PLC Troubleshooting Common Faults</a></li>
+                    <li><a href="https://www.nfpa.org/codes-and-standards/all-codes-and-standards/list-of-codes-and-standards/detail/nfpa-79" style="color: #4db8ff; text-decoration: none;">→ NFPA 79 Electrical Standard for Industrial Machinery</a></li>
+                </ul>
+
+            </div>
+        </div>
+    </div>
+
+    <div id="technical-mastery-hub" style="display: none;">
+        <!-- Your entire Technical Mastery Hub grid layout lives inside here -->
+        <h1>TECHNICAL MASTERY HUB</h1>
+        ...
+    </div>
+
     <div style="flex: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 40px;">
         <div style="width: 100%; max-width: 400px; background: #151515; border: 1px solid #333; padding: 30px; border-radius: 4px;">
             <h3 style="color: #fff; margin-top: 0; text-transform: uppercase; letter-spacing: 1px; border-bottom: 1px solid #222; padding-bottom: 10px;">Select Specialty Sector</h3>
@@ -189,12 +260,6 @@
         </div>
 
         <div class="right-panels">
-            <div id="vitals-panel" class="telemetry-panel">
-                <h3 id="vitals-title" style="color:#ffcd03; font-size: 0.9em; margin: 0 0 10px 0; letter-spacing: 2px;">LIVE TELEMETRY</h3>
-                <div id="vitals-container" class="vitals-grid">
-                    <div style="color: #555;">[NO TELEMETRY DETECTED]</div>
-                </div>
-            </div>
 
             <div class="sidebar" id="main-sidebar">
                 <h3 id="sidebar-title" style="color:#ffcd03; font-size: 0.9em; margin: 0 0 10px 0; letter-spacing: 2px;">SERVICE HISTORY LOG</h3>
@@ -218,13 +283,13 @@
 </body>
 
 <script>
-    // Track the last seen ID uniquely for each trade sector to avoid cross-contamination
-    const lastIdByTrade = {
-        "Diesel": null,
-        "Lineman": null,
-        "HVAC": null,
-        "PowerPlant": null,
-        "Automation": null
+    // Track ALL used IDs per trade dynamically
+    const usedIdsByTrade = {
+        "Diesel": [],
+        "Lineman": [],
+        "HVAC": [],
+        "PowerPlant": [],
+        "Automation": []
     };
 
     let sessionCorrect = 0;
@@ -236,37 +301,28 @@
     let currentExplanation = "";
     let currentThemeColor = "#ffcd03"; 
 
-    // Triggered whenever the user manually updates the mission drop-down selector
     function handleTradeChange() {
-        // Clear previous question descriptions out of view so old content doesn't linger
         document.getElementById('component').innerText = "Loading Sector Node...";
         document.getElementById('symptom').innerText = "Awaiting structural telemetry stream...";
         document.getElementById('result').innerText = "";
         document.getElementById('explanation').innerText = "";
-        
-        // Load the fresh sector challenge
         loadChallenge();
     }
 
     function launchSimulator() {
         const selectedValue = document.getElementById('landing-trade-select').value;
-        
-        // Sync the selector with your original bottom dropdown menu
         const mainSelect = document.getElementById('trade-select');
         if (mainSelect) {
             mainSelect.value = selectedValue;
-            // Trigger your existing function to change styles/headers matching the trade
             mainSelect.dispatchEvent(new Event('change')); 
         }
 
-        // Smoothly remove the landing overlay
         const welcomeOverlay = document.getElementById('welcome-screen');
         welcomeOverlay.style.transition = "opacity 0.4s ease";
         welcomeOverlay.style.opacity = "0";
         
         setTimeout(() => {
             welcomeOverlay.style.display = "none";
-            // Call your backend/database initialization loop here if needed (e.g., fetchQuestions())
         }, 400);
     }
 
@@ -282,17 +338,26 @@
         const selectedTrade = document.getElementById('trade-select').value;
         document.getElementById('options').style.display = 'block';
 
+        // --- FIXED: Ensure the HTML-based Technical Mastery Hub remains hidden during active questions ---
+        const resourcesPage = document.getElementById('resources-page');
+        const technicalMasteryHub = document.getElementById('technical-mastery-hub');
+        if (resourcesPage) resourcesPage.style.display = 'none';
+        if (technicalMasteryHub) technicalMasteryHub.style.display = 'none';
+
         try {
-            // Pull the last seen ID specifically for THIS trade sector
-            let url = `http://127.0.0.1:8000/get-challenge?trade=${selectedTrade}`;
-            const targetLastId = lastIdByTrade[selectedTrade];
-            
-            if (targetLastId) {
-                url += `&last_id=${targetLastId}`;
-            }
+            const usedIds = usedIdsByTrade[selectedTrade];
+            const excludeParam = usedIds.length > 0 ? `&exclude_ids=${usedIds.join(',')}` : '';
+            let url = `http://127.0.0.1:8000/get-challenge?trade=${selectedTrade}${excludeParam}`;
 
             const response = await fetch(url);
             const data = await response.json();
+
+            // Clear historical tracked IDs if the backend runs out of fresh entries
+            if ((data.error && data.error.toLowerCase().includes("no more challenges")) || data.no_remaining_data) {
+                usedIdsByTrade[selectedTrade] = []; 
+                loadChallenge();
+                return;
+            }
 
             if (data.error) {
                 const compElement = document.getElementById('component');
@@ -300,8 +365,10 @@
                 compElement.innerText = "DATABASE EMPTY";
                 document.getElementById('symptom').innerText = "Message: " + data.error + " (Please seed the diagnostic_challenges table).";
             } else {
-                // Save the new ID into our trade-specific storage map
-                lastIdByTrade[selectedTrade] = data.id; 
+                // Record the novel question ID inside your tracked arrays to prevent repetition
+                if (!usedIdsByTrade[selectedTrade].includes(data.id)) {
+                    usedIdsByTrade[selectedTrade].push(data.id);
+                }
                 
                 currentComponent = data.component;
                 currentFailureKey = data.failure_mode;
@@ -319,8 +386,6 @@
                     }
                 });
 
-                renderVitals(data.vitals);
-
                 const compElement = document.getElementById('component');
                 compElement.style.animation = 'none';
                 compElement.offsetHeight; 
@@ -331,6 +396,7 @@
                     
                 document.getElementById('result').innerText = "";
                 document.getElementById('explanation').innerText = "";
+                document.getElementById('options').style.display = 'block'; // Ensure buttons stay visible
                 document.querySelector('.btn-next').style.display = "none";
             }
         } catch (err) {
@@ -340,36 +406,13 @@
         }
     }
 
-    function renderVitals(vitalsObj) {
-        const container = document.getElementById('vitals-container');
-        container.innerHTML = ""; 
-        
-        if(!vitalsObj) {
-            container.innerHTML = `<div style="color: #555;">[NO TELEMETRY DATA]</div>`;
-            return;
-        }
-
-        for (const [key, value] of Object.entries(vitalsObj)) {
-            const formattedKey = key.replace('_', ' ');
-            const row = document.createElement('div');
-            row.className = 'vitals-row';
-            row.innerHTML = `
-                <span class="vitals-key">${formattedKey}</span>
-                <span class="vitals-val">${value}</span>
-            `;
-            container.appendChild(row);
-        }
-    }
-
     function applyTradeTheme(trade) {
         const scanner = document.querySelector('.scanner-card');
         const title = document.getElementById('main-title');
-        const telemetry = document.getElementById('vitals-panel');
         const sidebar = document.getElementById('main-sidebar');
         const selector = document.getElementById('trade-select');
         const actionButtons = document.querySelectorAll('.btn-action');
         const symptomText = document.getElementById('symptom');
-        const vitalsTitle = document.getElementById('vitals-title');
         const sidebarTitle = document.getElementById('sidebar-title');
         
         let targetColor = "#ffcd03";
@@ -394,16 +437,18 @@
 
         currentThemeColor = targetColor;
 
-        scanner.style.borderColor = targetColor;
-        telemetry.style.borderColor = targetColor;
-        sidebar.style.borderColor = targetColor;
-        selector.style.borderColor = targetColor;
-        selector.style.color = targetColor;
-        title.style.color = targetColor;
-        title.innerText = titleString;
-        symptomText.style.color = targetColor;
-        vitalsTitle.style.color = targetColor;
-        sidebarTitle.style.color = targetColor;
+        if (scanner) scanner.style.borderColor = targetColor;
+        if (sidebar) sidebar.style.borderColor = targetColor;
+        if (selector) {
+            selector.style.borderColor = targetColor;
+            selector.style.color = targetColor;
+        }
+        if (title) {
+            title.style.color = targetColor;
+            title.innerText = titleString;
+        }
+        if (symptomText) symptomText.style.color = targetColor;
+        if (sidebarTitle) sidebarTitle.style.color = targetColor;
 
         actionButtons.forEach(btn => {
             btn.style.backgroundColor = targetColor;
@@ -430,6 +475,7 @@
         } else {
             document.getElementById('result').innerText = "❌ ERRONEOUS DIAGNOSIS";
             document.getElementById('result').style.color = "#f44336";
+            document.getElementById('explanation').innerText = "ANALYSIS: " + currentExplanation; // Show description on mistake too
             logStatus = "MISDIAGNOSIS";
         }
 
@@ -451,13 +497,13 @@
         entry.className = 'log-entry';
         const logColor = logStatus === "RESOLVED" ? currentThemeColor : "#f44336";
         entry.innerHTML = `<span style="color:#555;">[${time}]</span> ${currentComponent}: <span style="color:${logColor};">${logStatus}</span>`;
-        historyLog.prepend(entry);
+        if (historyLog) historyLog.prepend(entry);
 
         if (sessionTotal >= SESSION_LIMIT) {
             displayFinalFeedback(sessionCorrect, sessionTotal);
-            nextBtn.style.display = "none"; 
+            if (nextBtn) nextBtn.style.display = "none"; 
         } else {
-            nextBtn.style.display = "block"; 
+            if (nextBtn) nextBtn.style.display = "block"; 
         }
     }
 
@@ -467,7 +513,10 @@
         const explanationEl = document.getElementById('explanation');
         const optionsEl = document.getElementById('options');
 
-        optionsEl.style.display = 'none'; 
+        const resourcesPage = document.getElementById('resources-page');
+        const hubGridEl = document.getElementById('technical-mastery-hub');
+
+        if (optionsEl) optionsEl.style.display = 'none'; 
         let feedbackColor = percentage >= 60 ? "#4CAF50" : "#ff9800";
         let statusText = percentage >= 60 ? "🏆 APPRENTICESHIP READY" : "🛠️ FIELD TRAINING REQUIRED";
 
@@ -497,15 +546,17 @@
             ]
         };
 
-        // Grab resources for the currently active trade
         const selectedTrade = document.getElementById('trade-select').value;
         const activeResources = resourcesByTrade[selectedTrade] || resourcesByTrade["Diesel"];
 
-        // Build the bullet points HTML string dynamically
         let resourceListHTML = "";
         activeResources.forEach(res => {
             resourceListHTML += `<li style="margin-bottom: 8px; color: #fff;">${res}</li>`;
         });
+
+        // --- FIXED: Reveal the technical components on session termination ---
+        if (resourcesPage) resourcesPage.style.display = 'block';
+        if (hubGridEl) hubGridEl.style.display = 'grid';
     
         explanationEl.innerHTML = `
         <div style="border: 1px solid ${feedbackColor}; padding: 20px; margin-top: 15px; background: #111; border-radius: 4px;">
@@ -513,14 +564,11 @@
             <p style="color: #ccc; font-size: 0.95em; line-height: 1.4;">
                 ${percentage >= 60 ? "Your diagnostic logic meets strict field industry standards. Continue practicing to maintain diagnostic precision." : "Focus closely on identifying core failure modes vs superficial symptoms to improve field safety outcomes."}
             </p>
-            
             <hr style="border: 0; border-top: 1px solid #333; margin: 15px 0;">
-            
             <h4 style="color: ${currentThemeColor}; margin: 0 0 10px 0; letter-spacing: 1px; font-size: 0.9em; text-transform: uppercase;">📚 Recommended Sector Materials:</h4>
             <ul style="padding-left: 20px; margin: 0 0 20px 0; font-size: 0.9em; text-align: left;">
                 ${resourceListHTML}
             </ul>
-            
             <button class="btn-action" style="background-color: ${feedbackColor}; color: #fff; width: 100%; margin: 0;" onclick="resetSimulator()">RESTART SIMULATOR MISSION</button>
         </div>`;
     }
@@ -528,18 +576,25 @@
     function resetSimulator() {
         sessionTotal = 0;
         sessionCorrect = 0;
-        // Clean out our storage dictionary tracking completely
-        for (let key in lastIdByTrade) {
-            lastIdByTrade[key] = null;
-        }
-        document.getElementById('options').style.display = 'block';
+        
+        // FIXED: Do not instantly clear history arrays so the uniqueness memory carries across sessions!
+        
         document.getElementById('history-log').innerHTML = '<div class="log-entry" style="color:#555;">[SYSTEM REBOOTED]</div>';
+        document.getElementById('explanation').innerHTML = '';
+        document.getElementById('result').innerText = '';
+
+        const resourcesPage = document.getElementById('resources-page');
+        const hubGridEl = document.getElementById('technical-mastery-hub');
+        if (resourcesPage) resourcesPage.style.display = 'none';
+        if (hubGridEl) hubGridEl.style.display = 'none';
+    
+        // FIXED: Removed the duplicate trailing call to loadChallenge() to prevent racing network threads
         loadChallenge();
     }
 
     window.onload = () => {
-        setTimeout(() => {
-            loadChallenge();
-        }, 50);
+      setTimeout(() => {
+         loadChallenge();
+      }, 50);
     };
 </script>
