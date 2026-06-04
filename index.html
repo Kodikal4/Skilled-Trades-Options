@@ -306,7 +306,6 @@
         
                 // Target live Azure Web App API endpoints
                 let url = `https://trade-skills-gmezhxcxf7gddaby.centralus-01.azurewebsites.net/get-challenge?trade=${selectedTrade}${excludeParam}`;
-
                 const response = await fetch(url);
                 const data = await response.json();
 
