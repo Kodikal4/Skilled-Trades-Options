@@ -74,6 +74,13 @@
         .btn-action:hover {
             filter: brightness(1.1);
         }
+
+        .btn-action, [id^="btn-"] {
+            position: relative;
+            z-index: 10;          /* Forces buttons above invisible overlapping boxes */
+            touch-action: manipulation; /* Optimizes mobile tap responsiveness and removes click delays */
+            cursor: pointer;
+        }
         
         .btn-next { 
             background: #444; 
