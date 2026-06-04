@@ -242,6 +242,7 @@
 
     <script>
         // Track unique historical parameter arrays dynamically per module interface
+        // Track unique historical parameter arrays dynamically per module interface
         const usedIdsByTrade = {
             "Diesel": [],
             "Lineman": [],
@@ -258,6 +259,9 @@
         let currentComponent = "";
         let currentExplanation = "";
         let currentThemeColor = "#ffcd03"; 
+
+        // Define your BASE_URL fallback if not specified elsewhere globally
+        const BASE_URL = window.location.origin;
 
         function handleTradeChange() {
             document.getElementById('component').innerText = "Loading Sector Node...";
@@ -305,16 +309,22 @@
                 const excludeParam = usedIds.length > 0 ? `&exclude_ids=${usedIds.join(',')}` : '';
         
                 // Target live Azure Web App API endpoints
-                let url = `https://trade-skills-gmezhxcxf7gddaby.centralus-01.azurewebsites.net/get-challenge?trade=${selectedTrade}${excludeParam}`;
+                const url = selectedTrade 
+                  ? `${BASE_URL}/get-challenge?trade=${encodeURIComponent(selectedTrade)}${excludeParam}`
+                  : `${BASE_URL}/get-challenge`;
+
                 const response = await fetch(url);
+                if (!response.ok) throw new Error("Network response was not ok");
                 const data = await response.json();
+
+                console.log("Successfully loaded challenge:", data);
 
                 // Clear structural tracker history logs if database runs clean out of questions
                 if ((data.error && data.error.toLowerCase().includes("no more challenges")) || data.no_remaining_data) {
                     usedIdsByTrade[selectedTrade] = []; 
                     loadChallenge();
                     return;
-                }
+                } 
 
                 if (data.error) {
                     const compElement = document.getElementById('component');
@@ -356,10 +366,10 @@
                     document.getElementById('options').style.display = 'block'; 
                     document.querySelector('.btn-next').style.display = "none";
                 }
-            } catch (err) {
+            } catch (error) {
+                console.error("Failed to fetch challenge from Azure backend:", error);
                 document.getElementById('component').innerText = "COMMUNICATION FAILURE";
                 document.getElementById('symptom').innerText = "Unable to reach ECM. Check local API status configuration.";
-                console.error("Cloud data interface extraction failure:", err);
             }
         }
 
