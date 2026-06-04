@@ -330,6 +330,20 @@
                     return;
                 }
 
+                if (data.component) {
+                    document.getElementById('component').innerText = data.component;
+                    document.getElementById('symptom').innerText = data.question || data.symptom;
+                    
+                    // Re-render buttons dynamically from the backend 'choices' array
+                    data.choices.forEach(choice => {
+                        const btn = document.createElement('button');
+                        btn.className = "btn-action";
+                        btn.innerText = choice.text || choice;
+                        btn.onclick = () => checkAnswer(choice.text || choice, choice.is_correct);
+                        document.getElementById('options').appendChild(btn);
+                    });
+                }
+
                 if (!usedIdsByTrade[selectedTrade].includes(data.id)) {
                     usedIdsByTrade[selectedTrade].push(data.id);
                 }
