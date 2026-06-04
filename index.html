@@ -296,26 +296,16 @@
         }
 
         async function loadChallenge() {
-            const tradeButtons = {
-                "Diesel": ["Fuel", "Spark", "Compression"],
-                "Lineman": ["Electrical", "Structural", "Insulation"],
-                "HVAC": ["Electrical", "Airflow", "Restriction"],
-                "PowerPlant": ["Mechanical", "Thermal", "Electrical"],
-                "Automation": ["Electrical", "Parameter", "Mechanical"]
-            };
-
             const selectedTrade = document.getElementById('trade-select').value;
             document.getElementById('options').style.display = 'block';
 
-            // Hide documentation elements while executing simulator nodes
             const resourcesPage = document.getElementById('resources-page');
             if (resourcesPage) resourcesPage.style.display = 'none';
 
             try {
                 const usedIds = usedIdsByTrade[selectedTrade];
                 const excludeParam = usedIds.length > 0 ? `&exclude_ids=${usedIds.join(',')}` : '';
-        
-                // Target live Azure Web App API endpoints
+
                 const url = selectedTrade 
                   ? `${BASE_URL}/get-challenge?trade=${encodeURIComponent(selectedTrade)}${excludeParam}`
                   : `${BASE_URL}/get-challenge`;
@@ -324,59 +314,84 @@
                 if (!response.ok) throw new Error("Network response was not ok");
                 const data = await response.json();
 
-                console.log("Successfully loaded challenge:", data);
+                console.log("Successfully loaded challenge data:", data);
 
-                // Clear structural tracker history logs if database runs clean out of questions
                 if ((data.error && data.error.toLowerCase().includes("no more challenges")) || data.no_remaining_data) {
-                    usedIdsByTrade[selectedTrade] = []; 
-                    loadChallenge();
-                    return;
+                   usedIdsByTrade[selectedTrade] = []; 
+                   loadChallenge();
+                   return;
                 } 
 
                 if (data.error) {
                     const compElement = document.getElementById('component');
                     compElement.className = ""; 
                     compElement.innerText = "DATABASE EMPTY";
-                    document.getElementById('symptom').innerText = "Message: " + data.error + " (Please seed the diagnostic_challenges table).";
-                } else {
-                    // Record configuration entry mapping parameters to uniqueness stack
-                    if (!usedIdsByTrade[selectedTrade].includes(data.id)) {
-                        usedIdsByTrade[selectedTrade].push(data.id);
-                    }
-                    
-                    currentComponent = data.component;
-                    currentFailureKey = data.failure_mode;
-                    currentExplanation = data.explanation;
-
-                    applyTradeTheme(selectedTrade);
-
-                    const labels = tradeButtons[selectedTrade] || tradeButtons["Diesel"];
-                    labels.forEach((label, index) => {
-                        const btn = document.getElementById(`btn-${index}`);
-                        if (btn) {
-                            btn.innerText = label;
-                            btn.onclick = null;
-                            btn.onclick = () => checkAnswer(label); 
-                        }
-                    });
-
-                    const compElement = document.getElementById('component');
-                    compElement.style.animation = 'none';
-                    compElement.offsetHeight; 
-                    compElement.style.animation = null; 
-                        
-                    compElement.innerText = data.component;
-                    document.getElementById('symptom').innerText = "SYMPTOM: " + data.symptom;
-                        
-                    document.getElementById('result').innerText = "";
-                    document.getElementById('explanation').innerText = "";
-                    document.getElementById('options').style.display = 'block'; 
-                    document.querySelector('.btn-next').style.display = "none";
+                    document.getElementById('symptom').innerText = "Message: " + data.error;
+                    return;
                 }
+
+                if (!usedIdsByTrade[selectedTrade].includes(data.id)) {
+                    usedIdsByTrade[selectedTrade].push(data.id);
+                }
+        
+                currentComponent = data.component;
+                
+                // Target whatever field holds the correct indicator text safely 
+                currentFailureKey = data.failure_mode || ""; 
+                currentExplanation = data.explanation || "Diagnostic evaluation complete.";
+
+                applyTradeTheme(selectedTrade);
+
+                // 🛠️ FIX: Dynamic Button Generation based on Backend Choices Payload
+                const optionsContainer = document.getElementById('options');
+                optionsContainer.innerHTML = ""; // Wipe old hardcoded buttons away cleanly
+
+                // Fallback options array if database fields are structured differently
+                const standardChoices = data.choices || [
+                    { text: "System Isolation Mode A", is_correct: false },
+                    { text: "System Isolation Mode B", is_correct: true },
+                    { text: "System Isolation Mode C", is_correct: false }
+                ];
+
+                standardChoices.forEach((choiceObj) => {
+                    const btn = document.createElement('button');
+                    btn.className = "btn-action";
+                    
+                    // Extract text string safely whether object or direct string array element
+                    const optionText = choiceObj.text || choiceObj;
+                    btn.innerText = optionText;
+                    
+                    // Explicitly pass both selection text and correct state configuration metrics
+                    const correctness = choiceObj.is_correct !== undefined ? choiceObj.is_correct : null;
+            
+                    // Mobile-optimized touch interaction mapping
+                    btn.onpointerdown = (e) => {
+                        e.preventDefault(); // Prevents layout zooming on double tap
+                        checkAnswer(optionText, correctness);
+                    };
+                    btn.onclick = () => checkAnswer(optionText, correctness);
+
+                    optionsContainer.appendChild(btn);
+                });
+
+                const compElement = document.getElementById('component');
+                compElement.style.animation = 'none';
+                compElement.offsetHeight; 
+                compElement.style.animation = null; 
+                    
+                compElement.innerText = data.component;
+                
+                // Handle variations in field schema properties (question text vs symptom text) safely
+                document.getElementById('symptom').innerText = data.question ? data.question : ("SYMPTOM: " + data.symptom);
+                    
+                document.getElementById('result').innerText = "";
+                document.getElementById('explanation').innerText = "";
+                document.querySelector('.btn-next').style.display = "none";
+
             } catch (error) {
                 console.error("Failed to fetch challenge from Azure backend:", error);
                 document.getElementById('component').innerText = "COMMUNICATION FAILURE";
-                document.getElementById('symptom').innerText = "Unable to reach ECM. Check local API status configuration.";
+                document.getElementById('symptom').innerText = "Unable to reach ECM. Check local cloud API status infrastructure.";
             }
         }
 
