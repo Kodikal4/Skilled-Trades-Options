@@ -302,13 +302,19 @@
             const resourcesPage = document.getElementById('resources-page');
             if (resourcesPage) resourcesPage.style.display = 'none';
 
+            // 1. Instantly clear old states so the UI resets cleanly on mobile
+            const optionsContainer = document.getElementById('options');
+            optionsContainer.innerHTML = ""; 
+            document.getElementById('result').innerText = "";
+            document.getElementById('explanation').innerText = "";
+
             try {
                 const usedIds = usedIdsByTrade[selectedTrade];
                 const excludeParam = usedIds.length > 0 ? `&exclude_ids=${usedIds.join(',')}` : '';
 
                 const url = selectedTrade 
-                  ? `${BASE_URL}/get-challenge?trade=${encodeURIComponent(selectedTrade)}${excludeParam}`
-                  : `${BASE_URL}/get-challenge`;
+                ? `${BASE_URL}/get-challenge?trade=${encodeURIComponent(selectedTrade)}${excludeParam}`
+                : `${BASE_URL}/get-challenge`;
 
                 const response = await fetch(url);
                 if (!response.ok) throw new Error("Network response was not ok");
@@ -317,9 +323,9 @@
                 console.log("Successfully loaded challenge data:", data);
 
                 if ((data.error && data.error.toLowerCase().includes("no more challenges")) || data.no_remaining_data) {
-                   usedIdsByTrade[selectedTrade] = []; 
-                   loadChallenge();
-                   return;
+                    usedIdsByTrade[selectedTrade] = []; 
+                    loadChallenge();
+                    return;
                 } 
 
                 if (data.error) {
@@ -330,57 +336,39 @@
                     return;
                 }
 
-                if (data.component) {
-                    document.getElementById('component').innerText = data.component;
-                    document.getElementById('symptom').innerText = data.question || data.symptom;
-                    
-                    // Re-render buttons dynamically from the backend 'choices' array
-                    data.choices.forEach(choice => {
-                        const btn = document.createElement('button');
-                        btn.className = "btn-action";
-                        btn.innerText = choice.text || choice;
-                        btn.onclick = () => checkAnswer(choice.text || choice, choice.is_correct);
-                        document.getElementById('options').appendChild(btn);
-                    });
-                }
-
+                // 2. Track seen questions for rotation uniqueness
                 if (!usedIdsByTrade[selectedTrade].includes(data.id)) {
                     usedIdsByTrade[selectedTrade].push(data.id);
                 }
-        
-                currentComponent = data.component;
                 
-                // Target whatever field holds the correct indicator text safely 
+                // 3. Update global states for answering evaluation logic
+                currentComponent = data.component;
                 currentFailureKey = data.failure_mode || ""; 
                 currentExplanation = data.explanation || "Diagnostic evaluation complete.";
 
+                // 4. Render UI textual elements safely
+                document.getElementById('component').innerText = data.component;
+                document.getElementById('symptom').innerText = data.question ? data.question : ("SYMPTOM: " + data.symptom);
+                
                 applyTradeTheme(selectedTrade);
 
-                // 🛠️ FIX: Dynamic Button Generation based on Backend Choices Payload
-                const optionsContainer = document.getElementById('options');
-                optionsContainer.innerHTML = ""; // Wipe old hardcoded buttons away cleanly
-
-                // Fallback options array if database fields are structured differently
-                const standardChoices = data.choices || [
-                    { text: "System Isolation Mode A", is_correct: false },
-                    { text: "System Isolation Mode B", is_correct: true },
-                    { text: "System Isolation Mode C", is_correct: false }
-                ];
-
+                // 5. Build buttons exactly once using live choices array data
+                const standardChoices = data.choices || [];
+                
                 standardChoices.forEach((choiceObj) => {
                     const btn = document.createElement('button');
                     btn.className = "btn-action";
                     
-                    // Extract text string safely whether object or direct string array element
+                    // Extract choice text safely whether it's an object or flat string
                     const optionText = choiceObj.text || choiceObj;
                     btn.innerText = optionText;
                     
-                    // Explicitly pass both selection text and correct state configuration metrics
+                    // Get correct indicator
                     const correctness = choiceObj.is_correct !== undefined ? choiceObj.is_correct : null;
-            
-                    // Mobile-optimized touch interaction mapping
+                    
+                    // Mobile-optimized touch interaction tracking mapping
                     btn.onpointerdown = (e) => {
-                        e.preventDefault(); // Prevents layout zooming on double tap
+                        e.preventDefault(); 
                         checkAnswer(optionText, correctness);
                     };
                     btn.onclick = () => checkAnswer(optionText, correctness);
@@ -388,75 +376,69 @@
                     optionsContainer.appendChild(btn);
                 });
 
+                // Clear typewriter animations cleanly
                 const compElement = document.getElementById('component');
                 compElement.style.animation = 'none';
                 compElement.offsetHeight; 
                 compElement.style.animation = null; 
                     
-                compElement.innerText = data.component;
-                
-                // Handle variations in field schema properties (question text vs symptom text) safely
-                document.getElementById('symptom').innerText = data.question ? data.question : ("SYMPTOM: " + data.symptom);
-                    
-                document.getElementById('result').innerText = "";
-                document.getElementById('explanation').innerText = "";
                 document.querySelector('.btn-next').style.display = "none";
 
-            } catch (error) {
-                console.error("Failed to fetch challenge from Azure backend:", error);
-                document.getElementById('component').innerText = "COMMUNICATION FAILURE";
-                document.getElementById('symptom').innerText = "Unable to reach ECM. Check local cloud API status infrastructure.";
-            }
-        }
-
-        function applyTradeTheme(trade) {
-            const scanner = document.querySelector('.scanner-card');
-            const title = document.getElementById('main-title');
-            const sidebar = document.getElementById('main-sidebar');
-            const selector = document.getElementById('trade-select');
-            const actionButtons = document.querySelectorAll('.btn-action');
-            const symptomText = document.getElementById('symptom');
-            const sidebarTitle = document.getElementById('sidebar-title');
-            
-            let targetColor = "#ffcd03";
-            let titleString = "CAT-SCAN DIAGNOSTIC v2.0";
-            let darkText = false;
-
-            if (trade === 'Lineman') {
-                targetColor = "#ff6600";
-                titleString = "UTILITY GRID DIAGNOSTIC v1.0";
-            } else if (trade === 'HVAC') {
-                targetColor = "#00bcff";
-                titleString = "THERMAL FLUID DIAGNOSTIC v1.0";
-            } else if (trade === 'PowerPlant') {
-                targetColor = "#ff3b30";
-                titleString = "GENERATION PLANT INTERFACE v1.0";
-            } else if (trade === 'Automation') {
-                targetColor = "#a020f0";
-                titleString = "AUTOMATION SCADA INTERFACE v1.2";
-            } else {
-                darkText = true; 
+                } catch (error) {
+                    console.error("Failed to fetch challenge from Azure backend:", error);
+                    document.getElementById('component').innerText = "COMMUNICATION FAILURE";
+                    document.getElementById('symptom').innerText = "Unable to reach ECM. Check local cloud API status infrastructure.";
+                }
             }
 
-            currentThemeColor = targetColor;
+            function applyTradeTheme(trade) {
+                const scanner = document.querySelector('.scanner-card');
+                const title = document.getElementById('main-title');
+                const sidebar = document.getElementById('main-sidebar');
+                const selector = document.getElementById('trade-select');
+                const actionButtons = document.querySelectorAll('.btn-action');
+                const symptomText = document.getElementById('symptom');
+                const sidebarTitle = document.getElementById('sidebar-title');
+                
+                let targetColor = "#ffcd03";
+                let titleString = "CAT-SCAN DIAGNOSTIC v2.0";
+                let darkText = false;
 
-            if (scanner) scanner.style.borderColor = targetColor;
-            if (sidebar) sidebar.style.borderColor = targetColor;
-            if (selector) {
-                selector.style.borderColor = targetColor;
-                selector.style.color = targetColor;
-            }
-            if (title) {
-                title.style.color = targetColor;
-                title.innerText = titleString;
-            }
-            if (symptomText) symptomText.style.color = targetColor;
-            if (sidebarTitle) sidebarTitle.style.color = targetColor;
+                if (trade === 'Lineman') {
+                    targetColor = "#ff6600";
+                    titleString = "UTILITY GRID DIAGNOSTIC v1.0";
+                } else if (trade === 'HVAC') {
+                    targetColor = "#00bcff";
+                    titleString = "THERMAL FLUID DIAGNOSTIC v1.0";
+                } else if (trade === 'PowerPlant') {
+                    targetColor = "#ff3b30";
+                    titleString = "GENERATION PLANT INTERFACE v1.0";
+                } else if (trade === 'Automation') {
+                    targetColor = "#a020f0";
+                    titleString = "AUTOMATION SCADA INTERFACE v1.2";
+                } else {
+                    darkText = true; 
+                }
 
-            actionButtons.forEach(btn => {
-                btn.style.backgroundColor = targetColor;
-                btn.style.color = darkText ? "#111" : "#fff";
-            });
+                currentThemeColor = targetColor;
+
+                if (scanner) scanner.style.borderColor = targetColor;
+                if (sidebar) sidebar.style.borderColor = targetColor;
+                if (selector) {
+                    selector.style.borderColor = targetColor;
+                    selector.style.color = targetColor;
+                }
+                if (title) {
+                    title.style.color = targetColor;
+                    title.innerText = titleString;
+                }
+                if (symptomText) symptomText.style.color = targetColor;
+                if (sidebarTitle) sidebarTitle.style.color = targetColor;
+
+                actionButtons.forEach(btn => {
+                    btn.style.backgroundColor = targetColor;
+                    btn.style.color = darkText ? "#111" : "#fff";
+                });
         }
 
         async function checkAnswer(choice) {
