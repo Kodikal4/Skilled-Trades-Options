@@ -277,10 +277,8 @@
         let currentExplanation = "";
         let currentThemeColor = "#ffcd03"; 
 
-        const cleanTrade = trade.split(':')[0]; 
-        const url = `https://your-azure-app.azurewebsites.net/get-challenge?trade=${cleanTrade}`;
+        const BASE_URL = "https://trade-skills-gmezhxcxf7gddaby.centralus-01.azurewebsites.net";
 
-        
         function handleTradeChange() {
             document.getElementById('component').innerText = "Loading Sector Node...";
             document.getElementById('symptom').innerText = "Awaiting structural telemetry stream...";
