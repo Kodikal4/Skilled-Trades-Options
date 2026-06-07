@@ -277,8 +277,10 @@
         let currentExplanation = "";
         let currentThemeColor = "#ffcd03"; 
 
-        const BASE_URL = "https://trade-skills-gmezhxcxf7gddaby.centralus-01.azurewebsites.net";
+        const cleanTrade = trade.split(':')[0]; 
+        const url = `https://your-azure-app.azurewebsites.net/get-challenge?trade=${cleanTrade}`;
 
+        
         function handleTradeChange() {
             document.getElementById('component').innerText = "Loading Sector Node...";
             document.getElementById('symptom').innerText = "Awaiting structural telemetry stream...";
@@ -440,6 +442,20 @@
             actionButtons.forEach(btn => {
                 btn.style.backgroundColor = targetColor;
                 btn.style.color = darkText ? "#111" : "#fff";
+            });
+        }
+
+        function renderChoices(choices) {
+            const buttonContainer = document.getElementById("choices-container"); // or whatever your ID is
+            
+            //  ADD THIS LINE to wipe out old buttons before rendering new ones:
+            buttonContainer.innerHTML = ""; 
+
+            choices.forEach(choice => {
+                const btn = document.createElement("button");
+                btn.innerText = choice.text;
+                // ... your button click logic
+                buttonContainer.appendChild(btn);
             });
         }
 
