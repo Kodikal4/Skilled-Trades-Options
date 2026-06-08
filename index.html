@@ -87,7 +87,7 @@
             transition: background-color 0.2s, filter 0.2s;
             position: relative;
             z-index: 10;
-            touch-action: manipulation; /* Removes mobile tap delay */
+            touch-action: manipulation;
             cursor: pointer;
             font-size: 1em;
             text-align: left;
@@ -98,17 +98,21 @@
         }
 
         .btn-next { 
+            display: none; 
+            width: 100%;
             background: #444; 
             color: white; 
             border: 1px solid #555; 
-            padding: 12px 25px; 
-            cursor: pointer; 
+            padding: 14px 25px; 
             margin-top: 30px; 
             font-weight: bold;
             text-transform: uppercase;
             border-radius: 3px;
-            display: none; 
+            cursor: pointer; 
             touch-action: manipulation;
+            font-family: monospace;
+            font-size: 1em;
+            text-align: center;
         }
 
         /* Typewriter Effect Animation */
@@ -137,28 +141,28 @@
         }
 
         #options {
-          display: flex;
-          flex-direction: column;
-          gap: 12px;
-          margin-top: 20px;
-          width: 100%;
-      }
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 20px;
+            width: 100%;
+        }
 
-      .btn-action {
-        display: block;
-        width: 100%;
-        box-sizing: border-box; /* Ensures padding doesn't cause overflow breakage */
-        padding: 16px 20px;
-        margin: 0;
-        text-align: left;
-      }
-</style>
+        .btn-action {
+            display: block;
+            width: 100%;
+            box-sizing: border-box; 
+            padding: 16px 20px;
+            margin: 0;
+            text-align: left;
+        }
+    </style>
 </head>
 <body>
     <h1 id="main-title" style="text-align:center; color:#ffcd03; margin-top:30px;">SYSTEM INITIALIZING...</h1>
 
     <div id="welcome-screen" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0a0a0a; z-index: 1000; display: flex; flex-direction: column; font-family: monospace; overflow-y: auto;">
-        <div style="width: 100%; height: 45vh; min-height: 250px; background: linear-gradient(to bottom, rgba(10,10,10,0.2), #0a0a0a); background-size: cover; background-position: center; display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding-bottom: 20px;">
+        <div style="width: 100%; height: 45vh; min-height: 250px; background: linear-gradient(to bottom, rgba(10,10,10,0.2), #0a0a0a); display: flex; flex-direction: column; align-items: center; justify-content: flex-end; padding-bottom: 20px;">
             <h1 style="color: #ff9800; font-size: 2.5em; margin: 0; text-transform: uppercase; letter-spacing: 4px; text-shadow: 2px 2px 10px rgba(0,0,0,0.8); text-align: center; padding: 0 10px;">Skilled Trades Academy</h1>
         </div>
 
@@ -174,8 +178,8 @@
                 <label style="color: #888; font-size: 0.8em; display: block; margin-bottom: 8px; font-weight: bold;">SELECT SECTOR NODE:</label>
                 <select id="landing-trade-select" style="width: 100%; color: #ff9800; border-color: #444; margin-bottom: 25px;">
                     <option value="Diesel">HEAVY EQUIPMENT DIESEL (v2.0)</option>
-                    <option value="Lineman">POWER GRID LINEMAN (v1.0)</option>
-                    <option value="HVAC">HVAC SPECIALIST (v1.0)</option>
+                    <option value="Lineman">POWER GRID (LINEMAN)</option>
+                    <option value="HVAC">HVAC SPECIALIST</option>
                     <option value="PowerPlant">POWER PLANT OPERATIONS (v1.0)</option>
                     <option value="Automation">INDUSTRIAL AUTOMATION PLC (v1.2)</option>
                 </select>
@@ -250,33 +254,15 @@
                 <h3 style="color: #ff9800; border-bottom: 1px solid #222; padding-bottom: 10px;">❄️ HVAC/R SYSTEMS</h3>
                 <ul style="list-style: none; padding: 0; line-height: 2;">
                     <li><a href="https://www.aireserv.com/about/blog/heating-and-cooling-basics/" target="_blank" style="color: #4db8ff; text-decoration: none;">Basics of HVAC Systems</a></li>
-                    <li><a href="https://www.ashrae.org/professional-development/all-instructor-led-training/catalog-of-instructor-led-training/hvac-design-level-i-essentials-18-hour" target="_blank" style="color: #4db8ff; text-decoration: none;">→ Superheat & Subcooling Calculator</a></li>
+                    <li><a href="https://www.ashrae.org/professional-development/all-instructor-led-training/catalog-of-instructor-led-training/hvac-design-level-i-essentials-18-hour" target="_blank" style="color: #4db8ff; text-decoration: none;">→ Superheat & Subcooling Reference</a></li>
                     <li><a href="https://www.youtube.com/watch?v=644g-M63NLI" target="_blank" style="color: #4db8ff; text-decoration: none;">→ Compressor Ohm Testing Guide</a></li>
-                </ul>
-            </div>
-
-            <div style="background: #151515; border: 1px solid #333; padding: 20px; border-radius: 8px;">
-                <h3 style="color: #ff9800; border-bottom: 1px solid #222; padding-bottom: 10px;">🏭 POWER PLANT OPERATIONS</h3>
-                <ul style="list-style: none; padding: 0; line-height: 2;">
-                    <li><a href="https://www.energy.gov/sites/prod/files/2023-06/Power_Plant_Operations_Guide.pdf" target="_blank" style="color: #4db8ff; text-decoration: none;">→ Power Plant Operations Guide (PDF)</a></li>
-                    <li><a href="https://www.youtube.com/watch?v=QV9X7GzJzZo" target="_blank" style="color: #4db8ff; text-decoration: none;">→ Turbine Maintenance Procedures</a></li>
-                    <li><a href="https://www.nuclearenergy.gov/sites/default/files/2021-09/Nuclear_Power_Plant_Safety_Procedures.pdf" target="_blank" style="color: #4db8ff; text-decoration: none;">→ Nuclear Power Plant Safety Procedures (PDF)</a></li>
-                </ul>
-            </div>
-
-            <div style="background: #151515; border: 1px solid #333; padding: 20px; border-radius: 8px;">
-                <h3 style="color: #ff9800; border-bottom: 1px solid #222; padding-bottom: 10px;">🤖 INDUSTRIAL AUTOMATION (PLC)</h3>
-                <ul style="list-style: none; padding: 0; line-height: 2;">
-                    <li><a href="https://www.rockwellautomation.com/en-us/products/hardware/allen-bradley/programmable-controllers.html" target="_blank" style="color: #4db8ff; text-decoration: none;">→ Allen-Bradley PLC Catalog</a></li>
-                    <li><a href="https://www.youtube.com/watch?v=5Xjv9sJqkLw" target="_blank" style="color: #4db8ff; text-decoration: none;">→ PLC Troubleshooting Common Faults</a></li>
-                    <li><a href="https://www.nfpa.org/codes-and-standards/all-codes-and-standards/list-of-codes-and-standards/detail/nfpa-79" target="_blank" style="color: #4db8ff; text-decoration: none;">→ NFPA 79 Electrical Standard for Industrial Machinery</a></li>
                 </ul>
             </div>
         </div>
     </div>
 
     <script>
-        // Track unique historical telemetry parameter arrays per module node interface
+        // Track unique historical data layers to feed back into SQL array queries
         const usedIdsByTrade = {
             "Diesel": [],
             "Lineman": [],
@@ -296,12 +282,17 @@
 
         const BASE_URL = "https://trade-skills-gmezhxcxf7gddaby.centralus-01.azurewebsites.net";
 
+        // Fixed the ID mapping targeting error here
         function handleTradeChange() {
             document.getElementById('component').innerText = "Loading Sector Node...";
             document.getElementById('symptom').innerText = "Awaiting structural telemetry stream...";
             document.getElementById('result').innerText = "";
             document.getElementById('explanation').innerText = "";
-            loadChallenge();
+
+            const selectElement = document.getElementById("trade-select");
+            const selectedTrade = selectElement.value; 
+            
+            loadChallenge(selectedTrade);
         }
 
         function launchSimulator() {
@@ -309,7 +300,7 @@
             const mainSelect = document.getElementById('trade-select');
             if (mainSelect) {
                 mainSelect.value = selectedValue;
-                mainSelect.dispatchEvent(new Event('change')); 
+                applyTradeTheme(selectedValue);
             }
 
             const welcomeOverlay = document.getElementById('welcome-screen');
@@ -318,15 +309,16 @@
             
             setTimeout(() => {
                 welcomeOverlay.style.display = "none";
+                loadChallenge(selectedValue);
             }, 400);
         }
 
-        async function loadChallenge() {
-            const selectedTrade = document.getElementById('trade-select').value;
+        // Added optional input string visibility routing
+        async function loadChallenge(explicitTrade = null) {
+            const selectedTrade = explicitTrade || document.getElementById('trade-select').value;
             const optionsContainer = document.getElementById('options');
             
-            // Instantly restore and clear configuration states for atomic redraw layout
-            optionsContainer.style.display = 'block';
+            optionsContainer.style.display = 'flex';
             optionsContainer.innerHTML = ""; 
             document.getElementById('result').innerText = "";
             document.getElementById('explanation').innerText = "";
@@ -345,7 +337,7 @@
 
                 if ((data.error && data.error.toLowerCase().includes("no more challenges")) || data.no_remaining_data) {
                     usedIdsByTrade[selectedTrade] = []; 
-                    loadChallenge();
+                    loadChallenge(selectedTrade);
                     return;
                 } 
 
@@ -357,12 +349,10 @@
                     return;
                 }
 
-                // Track seen parameters for rotation uniqueness
                 if (!usedIdsByTrade[selectedTrade].includes(data.id)) {
                     usedIdsByTrade[selectedTrade].push(data.id);
                 }
                 
-                // Establish active configuration properties globally
                 currentComponent = data.component;
                 currentFailureKey = data.failure_mode || ""; 
                 currentExplanation = data.explanation || "Diagnostic evaluation complete.";
@@ -372,27 +362,17 @@
                 
                 applyTradeTheme(selectedTrade);
 
-                // 2. Clear container immediately before iterating and drawing new nodes
                 optionsContainer.innerHTML = "";
 
-                // Build option selector array natively
                 const standardChoices = data.choices || [];
                 standardChoices.forEach((choiceObj) => {
                     const btn = document.createElement('button');
                     btn.className = "btn-action";
                     
-                    let optionText = "";
-                    if (typeof choiceObj === 'object' && choiceObj !== null) {
-                        optionText = choiceObj.text || "";
-                    } else {
-                        optionText = choiceObj;
-                    }
-    
+                    let optionText = (typeof choiceObj === 'object' && choiceObj !== null) ? (choiceObj.text || "") : choiceObj;
                     btn.innerText = optionText;
                     
-                    // Single point-of-truth reliable click trigger setup for mobile/desktop
                     btn.onclick = () => {
-                        // Suppress double submissions by turning off choice interactions temporarily
                         const activeButtons = optionsContainer.querySelectorAll('.btn-action');
                         activeButtons.forEach(b => b.removeAttribute('onclick'));
                         checkAnswer(optionText);
@@ -401,11 +381,8 @@
                     optionsContainer.appendChild(btn);
                 });
 
-
-                // Dynamically reset themes onto newly generated button nodes
                 applyTradeTheme(selectedTrade);
 
-                // Clear typewriter animations cleanly
                 const compElement = document.getElementById('component');
                 compElement.style.animation = 'none';
                 compElement.offsetHeight; 
@@ -470,20 +447,6 @@
             });
         }
 
-        function renderChoices(choices) {
-            const buttonContainer = document.getElementById("choices-container"); // or whatever your ID is
-            
-            //  ADD THIS LINE to wipe out old buttons before rendering new ones:
-            buttonContainer.innerHTML = ""; 
-
-            choices.forEach(choice => {
-                const btn = document.createElement("button");
-                btn.innerText = choice.text;
-                // ... your button click logic
-                buttonContainer.appendChild(btn);
-            });
-        }
-
         async function checkAnswer(choice) {
             const historyLog = document.getElementById('history-log');
             const selectedTrade = document.getElementById('trade-select').value; 
@@ -508,7 +471,6 @@
             document.getElementById('explanation').innerText = "ANALYSIS: " + currentExplanation;
 
             try {
-                // Post statistical updates directly to live cloud logging channel
                 await fetch(`${BASE_URL}/update-progress`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -561,15 +523,7 @@
                 ],
                 "HVAC": [
                     "📘 <em>Modern Refrigeration and Air Conditioning</em> – TXV & Refrigerant Cycle Troubleshooting",
-                    "📙 <em>Air Conditioning Contractors of America (ACCA)</em> – Manual D & Manual Q Reference Sheets"
-                ],
-                "PowerPlant": [
-                    "📘 <em>Power Plant Engineering</em> – Steam Turbine Dynamics & Generator Diagnostics",
-                    "📙 <em>EPRI (Electric Power Research Institute)</em> – Rotating Machinery Maintenance Standards"
-                ],
-                "Automation": [
-                    "📘 <em>Programmable Logic Controllers</em> (Petruzella) – Discrete & Analog I/O Troubleshooting",
-                    "📙 <em>NFPA 79</em> – Electrical Standard for Industrial Machinery Diagnostics"
+                    "📙 <em>Air Conditioning Contractors of America (ACCA)</em> – Reference Sheets"
                 ]
             };
 
@@ -614,7 +568,6 @@
 
         window.onload = () => {
             setTimeout(() => {
-                // Ensure initial setup runs cleanly if overlay isn't skipped instantly
                 const initialTrade = document.getElementById('trade-select').value;
                 applyTradeTheme(initialTrade);
             }, 50);
