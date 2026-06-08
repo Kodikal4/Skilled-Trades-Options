@@ -135,7 +135,24 @@
             border-radius: 4px;
             transition: border-color 0.3s ease, color 0.3s ease;
         }
-    </style>
+
+        #options {
+          display: flex;
+          flex-direction: column;
+          gap: 12px;
+          margin-top: 20px;
+          width: 100%;
+      }
+
+      .btn-action {
+        display: block;
+        width: 100%;
+        box-sizing: border-box; /* Ensures padding doesn't cause overflow breakage */
+        padding: 16px 20px;
+        margin: 0;
+        text-align: left;
+      }
+</style>
 </head>
 <body>
     <h1 id="main-title" style="text-align:center; color:#ffcd03; margin-top:30px;">SYSTEM INITIALIZING...</h1>
@@ -355,13 +372,22 @@
                 
                 applyTradeTheme(selectedTrade);
 
+                // 2. Clear container immediately before iterating and drawing new nodes
+                optionsContainer.innerHTML = "";
+
                 // Build option selector array natively
                 const standardChoices = data.choices || [];
                 standardChoices.forEach((choiceObj) => {
                     const btn = document.createElement('button');
                     btn.className = "btn-action";
                     
-                    const optionText = choiceObj.text || choiceObj;
+                    let optionText = "";
+                    if (typeof choiceObj === 'object' && choiceObj !== null) {
+                        optionText = choiceObj.text || "";
+                    } else {
+                        optionText = choiceObj;
+                    }
+    
                     btn.innerText = optionText;
                     
                     // Single point-of-truth reliable click trigger setup for mobile/desktop
@@ -374,6 +400,7 @@
 
                     optionsContainer.appendChild(btn);
                 });
+
 
                 // Dynamically reset themes onto newly generated button nodes
                 applyTradeTheme(selectedTrade);
