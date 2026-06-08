@@ -360,7 +360,22 @@
                     btn.className = "btn-action";
                     
                     // Seamless fallback normalization parsing both plain string arrays or object variations safely
-                    let optionText = (typeof choiceObj === 'object' && choiceObj !== null) ? (choiceObj.text || "") : choiceObj;
+                    let optionText = "";
+
+                    if (typeof choiceObj === 'object' && choiceObj !== null) {
+                        // 1. Check if the object contains a .text property
+                        if (choiceObj.text) {
+                            optionText = choiceObj.text;
+                        } else {
+                            // 2. Fallback: Extract the first string value present inside the object properties
+                            const values = Object.values(choiceObj);
+                            optionText = values.length > 0 ? values[0] : "";
+                        }
+                    } else {
+                        // 3. Fallback: Handle plain strings or numbers directly
+                        optionText = choiceObj;
+                    }
+
                     btn.innerText = optionText;
                     
                     btn.onclick = () => {
