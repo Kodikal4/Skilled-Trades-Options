@@ -388,8 +388,10 @@
                     optionsContainer.appendChild(btn);
                 });
 
-                // Trigger layout theme styling AFTER elements have been appended to the DOM tree
-                applyTradeTheme(selectedTrade);
+                // Trigger layout theme styling via an animation frame to avoid UI racing updates
+                requestAnimationFrame(() => {
+                    applyTradeTheme(selectedTrade);
+                });
 
                 const compElement = document.getElementById('component');
                 compElement.style.animation = 'none';
@@ -421,16 +423,22 @@
             if (trade === 'Lineman') {
                 targetColor = "#ff6600";
                 titleString = "UTILITY GRID DIAGNOSTIC v1.0";
+                darkText = false;
             } else if (trade === 'HVAC') {
                 targetColor = "#00bcff";
                 titleString = "THERMAL FLUID DIAGNOSTIC v1.0";
+                darkText = false;
             } else if (trade === 'PowerPlant') {
                 targetColor = "#ff3b30";
                 titleString = "GENERATION PLANT INTERFACE v1.0";
+                darkText = false;
             } else if (trade === 'Automation') {
                 targetColor = "#a020f0";
                 titleString = "AUTOMATION SCADA INTERFACE v1.2";
+                darkText = false;
             } else {
+                targetColor = "#ffcd03";
+                titleString = "CAT-SCAN DIAGNOSTIC v2.0";
                 darkText = true; 
             }
 
