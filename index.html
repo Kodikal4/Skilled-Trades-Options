@@ -313,6 +313,11 @@
             document.getElementById('result').innerText = "";
             document.getElementById('explanation').innerText = "";
 
+            // 1. CRITICAL RESET: Clear out old data from previous sector sessions
+            currentComponent = "";
+            currentFailureKey = "";
+            currentExplanation = "";
+
             const resourcesPage = document.getElementById('resources-page');
             if (resourcesPage) resourcesPage.style.display = 'none';
 
@@ -334,8 +339,8 @@
                 if (data.error) {
                     const compElement = document.getElementById('component');
                     compElement.className = ""; 
-                    compElement.innerText = "DATABASE EMPTY";
-                    document.getElementById('symptom').innerText = "Message: " + data.error;
+                    compElement.innerText = "DATABASE OVERLOAD / MISCONFIGURED";
+                    document.getElementById('symptom').innerText = "Telemetry Missing: " + data.error;
                     return;
                 }
 
@@ -343,16 +348,15 @@
                     usedIdsByTrade[selectedTrade].push(data.id);
                 }
                 
-                currentComponent = data.component;
                 currentFailureKey = data.failure_mode || ""; 
+                currentComponent = data.component || "Unknown Component Node";
                 currentExplanation = data.explanation || "Diagnostic evaluation complete.";
 
-                document.getElementById('component').innerText = data.component;
+                document.getElementById('component').innerText = currentComponent;
                 document.getElementById('symptom').innerText = data.question ? data.question : ("SYMPTOM: " + data.symptom);
 
                 optionsContainer.innerHTML = "";
 
-                // Defensive normalization: Ensure choices is definitely parsed as an array
                 let standardChoices = [];
                 if (Array.isArray(data.choices)) {
                     standardChoices = data.choices;
@@ -360,7 +364,6 @@
                     standardChoices = Object.values(data.choices);
                 }
 
-                // Loop over choices and actively construct elements
                 standardChoices.forEach((choiceObj) => {
                     const btn = document.createElement('button');
                     btn.className = "btn-action";
@@ -388,7 +391,6 @@
                     optionsContainer.appendChild(btn);
                 });
 
-                // Trigger layout theme styling via an animation frame to avoid UI racing updates
                 requestAnimationFrame(() => {
                     applyTradeTheme(selectedTrade);
                 });
@@ -402,10 +404,12 @@
 
             } catch (error) {
                 console.error("Failed to fetch challenge from backend layer:", error);
-                document.getElementById('component').innerText = "COMMUNICATION FAILURE";
-                document.getElementById('symptom').innerText = "Unable to reach ECM. Check local cloud API status infrastructure.";
+                // 2. VISUAL FEEDBACK: Explicitly alert that this node has a connectivity issue
+                document.getElementById('component').innerText = "TELEMETRY LINK FAILURE";
+                document.getElementById('symptom').innerText = `Unable to pull data for sector [${selectedTrade}]. Check Azure firewall restrictions or environment connections.`;
             }
         }
+}
 
         function applyTradeTheme(trade) {
             const scanner = document.querySelector('.scanner-card');
