@@ -331,9 +331,17 @@
                 const data = await response.json();
 
                 if (data.no_remaining_data) {
-                    usedIdsByTrade[selectedTrade] = []; 
-                    loadChallenge(selectedTrade);
-                    return;
+                    // Stop the loop and show an elegant system message instead of crashing
+                    const compElement = document.getElementById('component');
+                    if (compElement) {
+                        compElement.className = ""; 
+                        compElement.innerText = "NO TELEMETRY DATA RETURNED";
+                    }
+                    const symptomElement = document.getElementById('symptom');
+                    if (symptomElement) {
+                        symptomElement.innerText = "The server reported zero active diagnostic logs for this sector node. Verify database content seed.";
+                    }
+                    return; // Safety exit!
                 } 
 
                 if (data.error) {
@@ -409,7 +417,7 @@
                 document.getElementById('symptom').innerText = `Unable to pull data for sector [${selectedTrade}]. Check Azure firewall restrictions or environment connections.`;
             }
         }
-}
+
 
         function applyTradeTheme(trade) {
             const scanner = document.querySelector('.scanner-card');
@@ -468,29 +476,37 @@
         }
 
         async function checkAnswer(choice) {
-            const historyLog = document.getElementById('history-log');
-            const selectedTrade = document.getElementById('trade-select').value; 
-            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-            const nextBtn = document.querySelector('.btn-next');
-            let logStatus = "";
+           const historyLog = document.getElementById('history-log');
+           const selectedTrade = document.getElementById('trade-select').value; 
+           const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+           const nextBtn = document.querySelector('.btn-next');
+           let logStatus = "";
 
-            sessionTotal++;
-            const isCorrect = currentFailureKey.toLowerCase().trim() === choice.toLowerCase().trim() || currentFailureKey.toLowerCase().includes(choice.toLowerCase());
+           sessionTotal++;
 
-            if (isCorrect) {
+           // Clean strings thoroughly to bypass encoding gaps or spacing discrepancies
+           const cleanedChoice = choice.toLowerCase().replace(/[^a-z0-9]/g, '').trim();
+           const cleanedFailureKey = currentFailureKey.toLowerCase().replace(/[^a-z0-9]/g, '').trim();
+
+            // Dual validation evaluation
+           const isCorrect = (cleanedChoice === cleanedFailureKey) || 
+                              cleanedFailureKey.includes(cleanedChoice) || 
+                              cleanedChoice.includes(cleanedFailureKey);
+
+           if (isCorrect) {
                 sessionCorrect++;
                 document.getElementById('result').innerText = "✅ SYSTEM FAULT IDENTIFIED";
                 document.getElementById('result').style.color = currentThemeColor; 
                 logStatus = "RESOLVED";
-            } else {
+           } else {
                 document.getElementById('result').innerText = "❌ ERRONEOUS DIAGNOSIS";
                 document.getElementById('result').style.color = "#f44336";
                 logStatus = "MISDIAGNOSIS";
-            }
+           }
             
-            document.getElementById('explanation').innerText = "ANALYSIS: " + currentExplanation;
+           document.getElementById('explanation').innerText = "ANALYSIS: " + currentExplanation;
 
-            try {
+           try {
                 await fetch(`${BASE_URL}/update-progress`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
