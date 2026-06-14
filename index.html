@@ -185,8 +185,8 @@
 
     <div class="main-layout">
         <div class="scanner-card">
-            <h2 id="component" class="typewriter">Initializing Systems...</h2>
-            <p id="symptom" style="font-size: 1.2em; color: #ffcd03; transition: color 0.3s ease;">Awaiting data...</p>
+            <h2 id="component" class="typewriter">Terminal Link Active</h2>
+            <p id="symptom" style="font-size: 1.2em; color: #ffcd03; transition: color 0.3s ease;">Select a configuration node below to begin telemetry scan.</p>
             
             <div id="options"></div>
 
@@ -229,7 +229,6 @@
                 <ul style="list-style: none; padding: 0; line-height: 2;">
                     <li><a href="https://d6s74no67skb0.cloudfront.net/course-material/ME406-Diesel-Engine-Fundamentals.pdf" target="_blank" style="color: #4db8ff; text-decoration: none;">→ Fuel System Pressure Specs (PDF)</a></li>
                     <li><a href="https://media.defense.gov/2014/Jun/20/2002655897/-1/-1/1/140620-N-ZZ182-6546.pdf" target="_blank" style="color: #4db8ff; text-decoration: none;">→ Troubleshooting Fault Code MID 128</a></li>
-                    <li><a href="https://www.youtube.com/watch?v=io-V6hShyfg" target="_blank" style="color: #4db8ff; text-decoration: none;">→ Common Rail Injector Teardown Video</a></li>
                 </ul>
             </div>
 
@@ -238,7 +237,6 @@
                 <ul style="list-style: none; padding: 0; line-height: 2;">
                     <li><a href="https://www.nfpa.org/codes-and-standards/nfpa-70-standard-development/70" target="_blank" style="color: #4db8ff; text-decoration: none;">→ NFPA 70: National Electrical Code</a></li>
                     <li><a href="https://cdn.automationdirect.com/static/manuals/hpsimperator/wiring.pdf" target="_blank" style="color: #4db8ff; text-decoration: none;">→ Transformer Wiring Diagrams</a></li>
-                    <li><a href="https://www.youtube.com/watch?v=KltZQiUa4EA" target="_blank" style="color: #4db8ff; text-decoration: none;">→ Arc Flash Safety Procedures</a></li>
                 </ul>
             </div>
 
@@ -247,14 +245,12 @@
                 <ul style="list-style: none; padding: 0; line-height: 2;">
                     <li><a href="https://www.aireserv.com/about/blog/heating-and-cooling-basics/" target="_blank" style="color: #4db8ff; text-decoration: none;">Basics of HVAC Systems</a></li>
                     <li><a href="https://www.ashrae.org/professional-development/all-instructor-led-training/catalog-of-instructor-led-training/hvac-design-level-i-essentials-18-hour" target="_blank" style="color: #4db8ff; text-decoration: none;">→ Superheat & Subcooling Reference</a></li>
-                    <li><a href="https://www.youtube.com/watch?v=644g-M63NLI" target="_blank" style="color: #4db8ff; text-decoration: none;">→ Compressor Ohm Testing Guide</a></li>
                 </ul>
             </div>
         </div>
     </div>
 
     <script>
-        // Track unique historical data layers to feed back into SQL array queries
         const usedIdsByTrade = {
             "Diesel": [],
             "Lineman": [],
@@ -275,8 +271,6 @@
         const BASE_URL = "https://trade-skills-gmezhxcxf7gddaby.centralus-01.azurewebsites.net";
 
         function handleTradeChange() {
-            document.getElementById('component').innerText = "Loading Sector Node...";
-            document.getElementById('symptom').innerText = "Awaiting structural telemetry stream...";
             document.getElementById('result').innerText = "";
             document.getElementById('explanation').innerText = "";
 
@@ -308,12 +302,10 @@
             const selectedTrade = explicitTrade || document.getElementById('trade-select').value;
             const optionsContainer = document.getElementById('options');
             
-            optionsContainer.style.display = 'flex';
-            optionsContainer.innerHTML = ""; 
+            // Quietly reset results details so things stay clean
             document.getElementById('result').innerText = "";
             document.getElementById('explanation').innerText = "";
 
-            // 1. CRITICAL RESET: Clear out old data from previous sector sessions
             currentComponent = "";
             currentFailureKey = "";
             currentExplanation = "";
@@ -331,24 +323,25 @@
                 const data = await response.json();
 
                 if (data.no_remaining_data) {
-                    // Stop the loop and show an elegant system message instead of crashing
                     const compElement = document.getElementById('component');
                     if (compElement) {
                         compElement.className = ""; 
-                        compElement.innerText = "NO TELEMETRY DATA RETURNED";
+                        compElement.innerText = "ALL UNIQUE CHALLENGES SCANNED";
                     }
                     const symptomElement = document.getElementById('symptom');
                     if (symptomElement) {
-                        symptomElement.innerText = "The server reported zero active diagnostic logs for this sector node. Verify database content seed.";
+                        symptomElement.innerText = "You have evaluated all active telemetry logs for this node. Switch sectors or reset parameters.";
                     }
-                    return; // Safety exit!
+                    optionsContainer.innerHTML = ""; // Clear options out when done
+                    displayFinalFeedback(sessionCorrect, sessionTotal);
+                    return; 
                 } 
 
                 if (data.error) {
                     const compElement = document.getElementById('component');
                     compElement.className = ""; 
-                    compElement.innerText = "DATABASE OVERLOAD / MISCONFIGURED";
-                    document.getElementById('symptom').innerText = "Telemetry Missing: " + data.error;
+                    compElement.innerText = "OFFLINE OR MISCONFIGURED";
+                    document.getElementById('symptom').innerText = "Telemetry Note: " + data.error;
                     return;
                 }
 
@@ -360,10 +353,19 @@
                 currentComponent = data.component || "Unknown Component Node";
                 currentExplanation = data.explanation || "Diagnostic evaluation complete.";
 
+                // Instant UI swapping with no interstitial "Loading..." or "Awaiting..." text
                 document.getElementById('component').innerText = currentComponent;
-                document.getElementById('symptom').innerText = data.question ? data.question : ("SYMPTOM: " + data.symptom);
+                
+                if (data.question) {
+                    document.getElementById('symptom').innerText = data.question;
+                } else if (data.symptom) {
+                    document.getElementById('symptom').innerText = data.symptom.startsWith("SYMPTOM:") ? data.symptom : "SYMPTOM: " + data.symptom;
+                } else {
+                    document.getElementById('symptom').innerText = "Isolate the primary root failure mode for this node component.";
+                }
 
                 optionsContainer.innerHTML = "";
+                optionsContainer.style.display = 'flex';
 
                 let standardChoices = [];
                 if (Array.isArray(data.choices)) {
@@ -378,12 +380,7 @@
                     
                     let optionText = "";
                     if (typeof choiceObj === 'object' && choiceObj !== null) {
-                        if (choiceObj.text) {
-                            optionText = choiceObj.text;
-                        } else {
-                            const values = Object.values(choiceObj);
-                            optionText = values.length > 0 ? values[0] : "";
-                        }
+                        optionText = choiceObj.text || Object.values(choiceObj)[0] || "";
                     } else {
                         optionText = choiceObj;
                     }
@@ -412,12 +409,10 @@
 
             } catch (error) {
                 console.error("Failed to fetch challenge from backend layer:", error);
-                // 2. VISUAL FEEDBACK: Explicitly alert that this node has a connectivity issue
                 document.getElementById('component').innerText = "TELEMETRY LINK FAILURE";
-                document.getElementById('symptom').innerText = `Unable to pull data for sector [${selectedTrade}]. Check Azure firewall restrictions or environment connections.`;
+                document.getElementById('symptom').innerText = `Unable to pull database rows for sector [${selectedTrade}]. Verify your database schema or connection variables.`;
             }
         }
-
 
         function applyTradeTheme(trade) {
             const scanner = document.querySelector('.scanner-card');
@@ -430,7 +425,7 @@
             
             let targetColor = "#ffcd03";
             let titleString = "CAT-SCAN DIAGNOSTIC v2.0";
-            let darkText = false;
+            let darkText = true;
 
             if (trade === 'Lineman') {
                 targetColor = "#ff6600";
@@ -476,37 +471,36 @@
         }
 
         async function checkAnswer(choice) {
-           const historyLog = document.getElementById('history-log');
-           const selectedTrade = document.getElementById('trade-select').value; 
-           const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
-           const nextBtn = document.querySelector('.btn-next');
-           let logStatus = "";
+            const historyLog = document.getElementById('history-log');
+            const selectedTrade = document.getElementById('trade-select').value; 
+            const time = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', second: '2-digit' });
+            const nextBtn = document.querySelector('.btn-next');
+            let logStatus = "";
 
-           sessionTotal++;
+            sessionTotal++;
 
-           // Clean strings thoroughly to bypass encoding gaps or spacing discrepancies
-           const cleanedChoice = choice.toLowerCase().replace(/[^a-z0-9]/g, '').trim();
-           const cleanedFailureKey = currentFailureKey.toLowerCase().replace(/[^a-z0-9]/g, '').trim();
+            // Resilient dual-string evaluation logic
+            const normChoice = choice.toLowerCase().trim();
+            const normKey = currentFailureKey.toLowerCase().trim();
+            
+            const isCorrect = (normChoice === normKey) || 
+                              (normKey.length > 5 && normChoice.includes(normKey)) || 
+                              (normChoice.length > 5 && normKey.includes(normChoice));
 
-            // Dual validation evaluation
-           const isCorrect = (cleanedChoice === cleanedFailureKey) || 
-                              cleanedFailureKey.includes(cleanedChoice) || 
-                              cleanedChoice.includes(cleanedFailureKey);
-
-           if (isCorrect) {
+            if (isCorrect) {
                 sessionCorrect++;
                 document.getElementById('result').innerText = "✅ SYSTEM FAULT IDENTIFIED";
                 document.getElementById('result').style.color = currentThemeColor; 
                 logStatus = "RESOLVED";
-           } else {
+            } else {
                 document.getElementById('result').innerText = "❌ ERRONEOUS DIAGNOSIS";
                 document.getElementById('result').style.color = "#f44336";
                 logStatus = "MISDIAGNOSIS";
-           }
+            }
             
-           document.getElementById('explanation').innerText = "ANALYSIS: " + currentExplanation;
+            document.getElementById('explanation').innerText = "ANALYSIS: " + currentExplanation;
 
-           try {
+            try {
                 await fetch(`${BASE_URL}/update-progress`, {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -535,7 +529,7 @@
         }
 
         function displayFinalFeedback(correct, total) {
-            const percentage = (correct / total) * 100;
+            const percentage = total > 0 ? (correct / total) * 100 : 0;
             const resultEl = document.getElementById('result');
             const explanationEl = document.getElementById('explanation');
             const optionsEl = document.getElementById('options');
@@ -551,15 +545,23 @@
             const resourcesByTrade = {
                 "Diesel": [
                     "📘 <em>Caterpillar Performance Handbook</em> – Engine Diagnostics Sections",
-                    "📙 <em>ASE Medium/Heavy Truck Technician Study Guide</em> (T2 - Diesel Engines)"
+                    "专 <em>ASE Medium/Heavy Truck Technician Study Guide</em> (T2 - Diesel Engines)"
                 ],
                 "Lineman": [
                     "📘 <em>The Lineman's and Cableman's Handbook</em> – Grid Substation Faults",
-                    "📙 <em>OSHA Title 29 CFR Part 1910.269</em> – High-Voltage Power Safety Standards"
+                    "专 <em>OSHA Title 29 CFR Part 1910.269</em> – Power Safety Standards"
                 ],
                 "HVAC": [
-                    "📘 <em>Modern Refrigeration and Air Conditioning</em> – TXV & Refrigerant Cycle Troubleshooting",
-                    "📙 <em>Air Conditioning Contractors of America (ACCA)</em> – Reference Sheets"
+                    "📘 <em>Modern Refrigeration and Air Conditioning</em> – TXV Troubleshooting",
+                    "专 <em>Air Conditioning Contractors of America (ACCA)</em> – Guides"
+                ],
+                "PowerPlant": [
+                    "📘 <em>Power Plant Engineering</em> – Steam Cycle Efficiency & Boiler Defect Logs",
+                    "专 <em>NERC Reliability Standards</em> – Bulk Power System Grid Telemetry"
+                ],
+                "Automation": [
+                    "📘 <em>Programmable Logic Controllers</em> – Ladder Logic Circuit Auditing",
+                    "专 <em>SCADA System Design and Applications</em> – Industrial Communication Handshakes"
                 ]
             };
 
